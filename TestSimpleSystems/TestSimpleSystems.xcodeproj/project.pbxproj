@@ -9,10 +9,13 @@
 /* Begin PBXBuildFile section */
 		2A8E05FE1C2459E5001AF099 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E05FD1C2459E5001AF099 /* main.m */; };
 		2A8E06011C2459E5001AF099 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E06001C2459E5001AF099 /* AppDelegate.m */; };
-		2A8E06041C2459E5001AF099 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E06031C2459E5001AF099 /* ViewController.m */; };
 		2A8E06071C2459E5001AF099 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06051C2459E5001AF099 /* Main.storyboard */; };
 		2A8E06091C2459E5001AF099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06081C2459E5001AF099 /* Assets.xcassets */; };
 		2A8E060C1C2459E5001AF099 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E060A1C2459E5001AF099 /* LaunchScreen.storyboard */; };
+		2A8E06161C245B58001AF099 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E06141C245B58001AF099 /* MainViewController.m */; };
+		2A8E06171C245B58001AF099 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06151C245B58001AF099 /* MainViewController.xib */; };
+		2A8E061A1C245F20001AF099 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A8E06181C245F20001AF099 /* CoreLocation.framework */; };
+		2A8E061B1C245F20001AF099 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A8E06191C245F20001AF099 /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,12 +23,15 @@
 		2A8E05FD1C2459E5001AF099 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A8E05FF1C2459E5001AF099 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2A8E06001C2459E5001AF099 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		2A8E06021C2459E5001AF099 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		2A8E06031C2459E5001AF099 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		2A8E06061C2459E5001AF099 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2A8E06081C2459E5001AF099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2A8E060B1C2459E5001AF099 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2A8E060D1C2459E5001AF099 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2A8E06131C245B58001AF099 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		2A8E06141C245B58001AF099 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		2A8E06151C245B58001AF099 /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		2A8E06181C245F20001AF099 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		2A8E06191C245F20001AF099 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +39,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A8E061A1C245F20001AF099 /* CoreLocation.framework in Frameworks */,
+				2A8E061B1C245F20001AF099 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +50,8 @@
 		2A8E05F01C2459E5001AF099 = {
 			isa = PBXGroup;
 			children = (
+				2A8E06181C245F20001AF099 /* CoreLocation.framework */,
+				2A8E06191C245F20001AF099 /* MapKit.framework */,
 				2A8E05FB1C2459E5001AF099 /* TestSimpleSystems */,
 				2A8E05FA1C2459E5001AF099 /* Products */,
 			);
@@ -60,8 +70,9 @@
 			children = (
 				2A8E05FF1C2459E5001AF099 /* AppDelegate.h */,
 				2A8E06001C2459E5001AF099 /* AppDelegate.m */,
-				2A8E06021C2459E5001AF099 /* ViewController.h */,
-				2A8E06031C2459E5001AF099 /* ViewController.m */,
+				2A8E06131C245B58001AF099 /* MainViewController.h */,
+				2A8E06141C245B58001AF099 /* MainViewController.m */,
+				2A8E06151C245B58001AF099 /* MainViewController.xib */,
 				2A8E06051C2459E5001AF099 /* Main.storyboard */,
 				2A8E06081C2459E5001AF099 /* Assets.xcassets */,
 				2A8E060A1C2459E5001AF099 /* LaunchScreen.storyboard */,
@@ -139,6 +150,7 @@
 				2A8E060C1C2459E5001AF099 /* LaunchScreen.storyboard in Resources */,
 				2A8E06091C2459E5001AF099 /* Assets.xcassets in Resources */,
 				2A8E06071C2459E5001AF099 /* Main.storyboard in Resources */,
+				2A8E06171C245B58001AF099 /* MainViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,9 +161,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A8E06041C2459E5001AF099 /* ViewController.m in Sources */,
 				2A8E06011C2459E5001AF099 /* AppDelegate.m in Sources */,
 				2A8E05FE1C2459E5001AF099 /* main.m in Sources */,
+				2A8E06161C245B58001AF099 /* MainViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +312,7 @@
 				2A8E06121C2459E5001AF099 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
