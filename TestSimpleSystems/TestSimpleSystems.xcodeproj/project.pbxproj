@@ -16,6 +16,11 @@
 		2A8E06171C245B58001AF099 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06151C245B58001AF099 /* MainViewController.xib */; };
 		2A8E061A1C245F20001AF099 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A8E06181C245F20001AF099 /* CoreLocation.framework */; };
 		2A8E061B1C245F20001AF099 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A8E06191C245F20001AF099 /* MapKit.framework */; };
+		2A8E061E1C246081001AF099 /* SomePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E061D1C246081001AF099 /* SomePoint.m */; };
+		2A8E06221C24641E001AF099 /* PointTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E06201C24641E001AF099 /* PointTableViewCell.m */; };
+		2A8E06231C24641E001AF099 /* PointTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06211C24641E001AF099 /* PointTableViewCell.xib */; };
+		2A8E06271C246BEC001AF099 /* AddEditPointViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E06251C246BEC001AF099 /* AddEditPointViewController.m */; };
+		2A8E06281C246BEC001AF099 /* AddEditPointViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06261C246BEC001AF099 /* AddEditPointViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +37,14 @@
 		2A8E06151C245B58001AF099 /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
 		2A8E06181C245F20001AF099 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		2A8E06191C245F20001AF099 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		2A8E061C1C246081001AF099 /* SomePoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SomePoint.h; sourceTree = "<group>"; };
+		2A8E061D1C246081001AF099 /* SomePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SomePoint.m; sourceTree = "<group>"; };
+		2A8E061F1C24641E001AF099 /* PointTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointTableViewCell.h; sourceTree = "<group>"; };
+		2A8E06201C24641E001AF099 /* PointTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PointTableViewCell.m; sourceTree = "<group>"; };
+		2A8E06211C24641E001AF099 /* PointTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointTableViewCell.xib; sourceTree = "<group>"; };
+		2A8E06241C246BEC001AF099 /* AddEditPointViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddEditPointViewController.h; sourceTree = "<group>"; };
+		2A8E06251C246BEC001AF099 /* AddEditPointViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddEditPointViewController.m; sourceTree = "<group>"; };
+		2A8E06261C246BEC001AF099 /* AddEditPointViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddEditPointViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +86,14 @@
 				2A8E06131C245B58001AF099 /* MainViewController.h */,
 				2A8E06141C245B58001AF099 /* MainViewController.m */,
 				2A8E06151C245B58001AF099 /* MainViewController.xib */,
+				2A8E061F1C24641E001AF099 /* PointTableViewCell.h */,
+				2A8E06201C24641E001AF099 /* PointTableViewCell.m */,
+				2A8E06211C24641E001AF099 /* PointTableViewCell.xib */,
+				2A8E061C1C246081001AF099 /* SomePoint.h */,
+				2A8E061D1C246081001AF099 /* SomePoint.m */,
+				2A8E06241C246BEC001AF099 /* AddEditPointViewController.h */,
+				2A8E06251C246BEC001AF099 /* AddEditPointViewController.m */,
+				2A8E06261C246BEC001AF099 /* AddEditPointViewController.xib */,
 				2A8E06051C2459E5001AF099 /* Main.storyboard */,
 				2A8E06081C2459E5001AF099 /* Assets.xcassets */,
 				2A8E060A1C2459E5001AF099 /* LaunchScreen.storyboard */,
@@ -149,6 +170,8 @@
 			files = (
 				2A8E060C1C2459E5001AF099 /* LaunchScreen.storyboard in Resources */,
 				2A8E06091C2459E5001AF099 /* Assets.xcassets in Resources */,
+				2A8E06231C24641E001AF099 /* PointTableViewCell.xib in Resources */,
+				2A8E06281C246BEC001AF099 /* AddEditPointViewController.xib in Resources */,
 				2A8E06071C2459E5001AF099 /* Main.storyboard in Resources */,
 				2A8E06171C245B58001AF099 /* MainViewController.xib in Resources */,
 			);
@@ -161,8 +184,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A8E061E1C246081001AF099 /* SomePoint.m in Sources */,
 				2A8E06011C2459E5001AF099 /* AppDelegate.m in Sources */,
 				2A8E05FE1C2459E5001AF099 /* main.m in Sources */,
+				2A8E06271C246BEC001AF099 /* AddEditPointViewController.m in Sources */,
+				2A8E06221C24641E001AF099 /* PointTableViewCell.m in Sources */,
 				2A8E06161C245B58001AF099 /* MainViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
