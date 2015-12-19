@@ -63,13 +63,7 @@
               
               for (NSDictionary *pointDict in pointsDictArray)
               {
-                  SomePoint *point = [[SomePoint alloc] init];
-#warning вынести парсинг словаря в SomePoint class?
-                  point.pointID = [pointDict objectForKey:@"id"];
-                  point.title = [pointDict objectForKey:@"title"];
-                  point.lat = [[pointDict objectForKey:@"lat"] doubleValue];
-                  point.lng = [[pointDict objectForKey:@"lng"] doubleValue];
-                  
+                  SomePoint *point = [SomePoint pointFromDictionary:pointDict];
                   [allPoints addObject:point];
               }
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_ALL_POINTS_LOADED object:self];
@@ -114,14 +108,7 @@
               NSError *err = nil;
               NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
               
-              SomePoint *point = [[SomePoint alloc] init];
-#warning вынести парсинг словаря в SomePoint class?
-              point.pointID = [pointDict objectForKey:@"id"];
-              point.title = [pointDict objectForKey:@"title"];
-              point.lat = [[pointDict objectForKey:@"lat"] doubleValue];
-              point.lng = [[pointDict objectForKey:@"lng"] doubleValue];
-              point.desc = [pointDict objectForKey:@"desc"];
-              
+              SomePoint *point = [SomePoint pointFromDictionary:pointDict];
               [allPoints addObject:point];
               
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_ADD_POINT_SUCCESS object:self];
@@ -151,15 +138,8 @@
               NSError *err = nil;
               NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
               
-              SomePoint *point = [[SomePoint alloc] init];
-#warning вынести парсинг словаря в SomePoint class?
-              point.pointID = [pointDict objectForKey:@"id"];
-              point.title = [pointDict objectForKey:@"title"];
-              point.lat = [[pointDict objectForKey:@"lat"] doubleValue];
-              point.lng = [[pointDict objectForKey:@"lng"] doubleValue];
-              point.desc = [pointDict objectForKey:@"desc"];
-              
-              [self replacePointWith:point];
+              SomePoint *point = [SomePoint pointFromDictionary:pointDict];
+              [self replaceOrAddPointWith:point];
               
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_SUCCESS object:self];
           }
@@ -167,6 +147,51 @@
           {
               NSLog(@"get point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_FAILED object:self];
+          }
+      }] resume];
+}
+
+-(void)updatePoint:(SomePoint*)point
+{
+    NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",
+                           urlOrIpServer, point.pointID];
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                                       timeoutInterval:5];
+    
+    [request setHTTPMethod: @"PUT"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    NSDictionary *dictPoint = [NSDictionary dictionaryWithObjectsAndKeys:
+                               point.title, @"title",
+                               [NSString stringWithFormat:@"%f", point.lat], @"lat",
+                               [NSString stringWithFormat:@"%f", point.lng], @"lng",
+                               point.desc, @"desc",
+                               nil];
+    
+    NSError *error = nil;
+    NSData *postData = [NSJSONSerialization dataWithJSONObject:dictPoint options:0 error:&error];
+    [request setHTTPBody:postData];
+    
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+      {
+          NSLog(@"update point response status: %ld", (long)[(NSHTTPURLResponse*)response statusCode]);
+          NSLog(@"update point response %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+          if ([(NSHTTPURLResponse*)response statusCode] == 200)
+          {
+              NSError *err = nil;
+              NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+              
+              SomePoint *point = [SomePoint pointFromDictionary:pointDict];
+              [self replaceOrAddPointWith:point];
+              
+              [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_POINT_SUCCESS object:self];
+          }
+          else
+          {
+              NSLog(@"update point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+              [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_POINT_FAILED object:self];
           }
       }] resume];
 }
@@ -183,7 +208,7 @@
     return nil;
 }
 
--(void)replacePointWith:(SomePoint*)point
+-(void)replaceOrAddPointWith:(SomePoint*)point
 {
     SomePoint *foundedOldPoint = nil;
     for (SomePoint *oldPoint in allPoints)
@@ -198,8 +223,8 @@
     if (foundedOldPoint)
     {
         [allPoints removeObject:foundedOldPoint];
-        [allPoints addObject:point];
     }
+    [allPoints addObject:point];
 }
 
 -(NSArray <SomePoint*>*)getAllPoints

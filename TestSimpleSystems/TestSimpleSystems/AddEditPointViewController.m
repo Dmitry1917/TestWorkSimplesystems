@@ -55,6 +55,15 @@
                                                  name:NOTIFICATION_GET_FULL_POINT_FAILED
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveUpdatePointSuccess)
+                                                 name:NOTIFICATION_UPDATE_POINT_SUCCESS
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveUpdatePointFail)
+                                                 name:NOTIFICATION_UPDATE_POINT_FAILED
+                                               object:nil];
+    
     if (!_isAdding)
     {
         [_titleField setText:_editingPoint.title];
@@ -75,11 +84,14 @@
 -(void)receiveAddPointSuccess
 {
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point added successfully" message:@"" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
         
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self.navigationController presentViewController:alertController animated:YES completion:nil];
     });
 }
 
@@ -111,6 +123,34 @@
     //пока никакой реакции не требуется
 }
 
+-(void)receiveUpdatePointSuccess
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        SomePoint *replacePoint = [[PointsManager sharedInstance] getResultFullPointWithID:_editingPoint.pointID];
+        
+        if (replacePoint)
+        {
+            _editingPoint = replacePoint;
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point updated" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:ok];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+    });
+}
+-(void)receiveUpdatePointFail
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point update fail" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -124,7 +164,6 @@
 -(bool)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
-#warning обработать корректность данных
     return YES;
 }
 
@@ -156,6 +195,28 @@
         point.desc = [NSString stringWithString:_descTextView.text];
         
         [[PointsManager sharedInstance] addPoint:point];
+    }
+    else
+    {
+#warning Такая проверка и реакция на неё, конечно, неудачны, но как обрабатывать подобные ситуации (не получили полных данных о точке, которую хотим поменять) и что показывать пользователю обычно решается совместно, а не единолично разработчиком.
+        if ([_descTextView.text isEqualToString:DESC_NOT_LOADED])
+        {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point was not fully loaded" message:@"It will be better not update point, before full data available." preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:ok];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+        else
+        {
+#warning проверка данных
+            _editingPoint.title = [NSString stringWithString:_titleField.text];
+            _editingPoint.lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
+            _editingPoint.lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
+            _editingPoint.desc = [NSString stringWithString:_descTextView.text];
+            
+            [[PointsManager sharedInstance] updatePoint:_editingPoint];
+        }
     }
 }
 

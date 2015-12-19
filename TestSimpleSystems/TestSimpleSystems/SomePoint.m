@@ -10,4 +10,17 @@
 
 @implementation SomePoint
 
++(SomePoint*)pointFromDictionary:(NSDictionary*)pointDict
+{
+    SomePoint *point = [[SomePoint alloc] init];
+    
+    point.pointID = [pointDict objectForKey:@"id"];
+    point.title = [pointDict objectForKey:@"title"];
+    point.lat = [[pointDict objectForKey:@"lat"] doubleValue];
+    point.lng = [[pointDict objectForKey:@"lng"] doubleValue];
+    point.desc = [pointDict objectForKey:@"desc"];
+    
+    return point;
+}
+
 @end

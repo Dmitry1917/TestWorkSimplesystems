@@ -17,6 +17,9 @@
 #define NOTIFICATION_GET_FULL_POINT_SUCCESS @"NOTIFICATION_GET_FULL_POINT_SUCCESS"
 #define NOTIFICATION_GET_FULL_POINT_FAILED @"NOTIFICATION_GET_FULL_POINT_FAILED"
 
+#define NOTIFICATION_UPDATE_POINT_SUCCESS @"NOTIFICATION_UPDATE_POINT_SUCCESS"
+#define NOTIFICATION_UPDATE_POINT_FAILED @"NOTIFICATION_UPDATE_POINT_FAILED"
+
 @class SomePoint;
 @interface PointsManager : NSObject
 
@@ -29,5 +32,7 @@
 -(void)addPoint:(SomePoint*)point;
 -(void)getFullPointWithID:(NSString*)pointID;
 -(SomePoint*)getResultFullPointWithID:(NSString *)pointID;
+
+-(void)updatePoint:(SomePoint*)point;
 
 @end

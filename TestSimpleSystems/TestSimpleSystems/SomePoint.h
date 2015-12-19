@@ -16,4 +16,6 @@
 @property double lat;
 @property double lng;
 
++(SomePoint*)pointFromDictionary:(NSDictionary*)pointDict;
+
 @end

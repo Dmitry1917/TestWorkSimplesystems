@@ -66,6 +66,10 @@
                                              selector:@selector(receiveGetFullPointSuccess)
                                                  name:NOTIFICATION_GET_FULL_POINT_SUCCESS
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveUpdatePointSuccess)
+                                                 name:NOTIFICATION_UPDATE_POINT_SUCCESS
+                                               object:nil];
     
 //    SomePoint *testPoint = [[SomePoint alloc] init];
 //    testPoint.pointID = @"1";
@@ -98,7 +102,13 @@
     [self updateInterface];
 }
 
+#warning при необходимости можно переделать, чтобы не обновлять всё при изменении одной точки
 -(void)receiveGetFullPointSuccess
+{
+    [self updateInterface];
+}
+
+-(void)receiveUpdatePointSuccess
 {
     [self updateInterface];
 }
