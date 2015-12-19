@@ -103,11 +103,6 @@
     
     NSError *error = nil;
     NSData *postData = [NSJSONSerialization dataWithJSONObject:dictPoint options:0 error:&error];
-    
-    //NSData *postData = [sendInfo dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-    //NSLog(@"send sms send data %@", [[NSString alloc] initWithData:postData encoding:NSASCIIStringEncoding]);
-//    NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
-//    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody:postData];
     
     [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
@@ -137,6 +132,74 @@
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_ADD_POINT_FAILED object:self];
           }
       }] resume];
+}
+
+-(void)getFullPointWithID:(NSString*)pointID
+{
+    NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",
+                           urlOrIpServer, pointID];
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                                       timeoutInterval:5];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+      {
+          NSLog(@"get point response status: %ld", (long)[(NSHTTPURLResponse*)response statusCode]);
+          NSLog(@"get point response %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+          if ([(NSHTTPURLResponse*)response statusCode] == 200)
+          {
+              NSError *err = nil;
+              NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+              
+              SomePoint *point = [[SomePoint alloc] init];
+#warning вынести парсинг словаря в SomePoint class?
+              point.pointID = [pointDict objectForKey:@"id"];
+              point.title = [pointDict objectForKey:@"title"];
+              point.lat = [[pointDict objectForKey:@"lat"] doubleValue];
+              point.lng = [[pointDict objectForKey:@"lng"] doubleValue];
+              point.desc = [pointDict objectForKey:@"desc"];
+              
+              [self replacePointWith:point];
+              
+              [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_SUCCESS object:self];
+          }
+          else
+          {
+              NSLog(@"get point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+              [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_FAILED object:self];
+          }
+      }] resume];
+}
+
+-(SomePoint*)getResultFullPointWithID:(NSString *)pointID
+{
+    for (SomePoint *point in allPoints)
+    {
+        if ([point.pointID isEqualToString:pointID])
+        {
+            return point;
+        }
+    }
+    return nil;
+}
+
+-(void)replacePointWith:(SomePoint*)point
+{
+    SomePoint *foundedOldPoint = nil;
+    for (SomePoint *oldPoint in allPoints)
+    {
+        if ([oldPoint.pointID isEqualToString:point.pointID])
+        {
+            foundedOldPoint = oldPoint;
+            break;
+        }
+    }
+    
+    if (foundedOldPoint)
+    {
+        [allPoints removeObject:foundedOldPoint];
+        [allPoints addObject:point];
+    }
 }
 
 -(NSArray <SomePoint*>*)getAllPoints

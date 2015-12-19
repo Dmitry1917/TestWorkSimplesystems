@@ -10,6 +10,8 @@
 #import "SomePoint.h"
 #import "PointsManager.h"
 
+#define DESC_NOT_LOADED @"DESCRIPTION_NOT_LOADED"
+
 @interface AddEditPointViewController () <UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UITextField *titleField;
 @property (strong, nonatomic) IBOutlet UITextField *latField;
@@ -43,6 +45,31 @@
                                              selector:@selector(receiveAddPointFail)
                                                  name:NOTIFICATION_ADD_POINT_FAILED
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveGetFullPointSuccess)
+                                                 name:NOTIFICATION_GET_FULL_POINT_SUCCESS
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveGetFullPointFail)
+                                                 name:NOTIFICATION_GET_FULL_POINT_FAILED
+                                               object:nil];
+    
+    if (!_isAdding)
+    {
+        [_titleField setText:_editingPoint.title];
+        [_latField setText:[NSString stringWithFormat:@"%f", _editingPoint.lat]];
+        [_lngField setText:[NSString stringWithFormat:@"%f", _editingPoint.lng]];
+        if (_editingPoint.desc)
+        {
+            [_descTextView setText:_editingPoint.desc];
+        }
+        else
+        {
+            [_descTextView setText:DESC_NOT_LOADED];
+            [[PointsManager sharedInstance] getFullPointWithID:_editingPoint.pointID];
+        }
+    }
 }
 
 -(void)receiveAddPointSuccess
@@ -65,6 +92,23 @@
         
         [self presentViewController:alertController animated:YES completion:nil];
     });
+}
+
+-(void)receiveGetFullPointSuccess
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        SomePoint *replacePoint = [[PointsManager sharedInstance] getResultFullPointWithID:_editingPoint.pointID];
+        
+        if (replacePoint)
+        {
+            _editingPoint = replacePoint;
+            [_descTextView setText:_editingPoint.desc];
+        }
+    });
+}
+-(void)receiveGetFullPointFail
+{
+    //пока никакой реакции не требуется
 }
 
 - (void)didReceiveMemoryWarning {

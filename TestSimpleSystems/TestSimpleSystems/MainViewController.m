@@ -62,18 +62,48 @@
                                              selector:@selector(receiveAddPointSuccess)
                                                  name:NOTIFICATION_ADD_POINT_SUCCESS
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveGetFullPointSuccess)
+                                                 name:NOTIFICATION_GET_FULL_POINT_SUCCESS
+                                               object:nil];
     
-    SomePoint *testPoint = [[SomePoint alloc] init];
-    testPoint.pointID = @"1";
-    testPoint.title = @"title";
-    testPoint.desc = @"desc";
-    testPoint.lat = 121.325432;
-    testPoint.lng = 15.345236236;
-    
-    [allPoints addObject:testPoint];
+//    SomePoint *testPoint = [[SomePoint alloc] init];
+//    testPoint.pointID = @"1";
+//    testPoint.title = @"title";
+//    testPoint.desc = @"desc";
+//    testPoint.lat = 121.325432;
+//    testPoint.lng = 15.345236236;
+//    
+//    [allPoints addObject:testPoint];
 }
 
 -(void)receiveAllPointsSuccess
+{
+    [self updateInterface];
+}
+
+-(void)receiveAllPointsFail
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Points can't be load" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+}
+
+-(void)receiveAddPointSuccess
+{
+    [self updateInterface];
+}
+
+-(void)receiveGetFullPointSuccess
+{
+    [self updateInterface];
+}
+
+-(void)updateInterface
 {
 #warning сортировка точек
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -84,21 +114,6 @@
     });
     
 #warning обновить карту тоже
-}
-
--(void)receiveAllPointsFail
-{
-#warning обработать неудачу получения данных
-}
-
--(void)receiveAddPointSuccess
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [allPoints removeAllObjects];
-        [allPoints addObjectsFromArray:[[PointsManager sharedInstance] getAllPoints]];
-        
-        [_pointsTable reloadData];
-    });
 }
 
 - (void)didReceiveMemoryWarning {
@@ -186,6 +201,9 @@
 {
     addPoint = NO;
     choosedCell = indexPath;
+    
+    //[[PointsManager sharedInstance] getFullPointWithID:[allPoints objectAtIndex:indexPath.row].pointID];
+    
     [self performSegueWithIdentifier:@"addEditPoint" sender:nil];
 }
 
