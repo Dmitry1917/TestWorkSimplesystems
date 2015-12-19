@@ -21,6 +21,7 @@
 		2A8E06231C24641E001AF099 /* PointTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06211C24641E001AF099 /* PointTableViewCell.xib */; };
 		2A8E06271C246BEC001AF099 /* AddEditPointViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E06251C246BEC001AF099 /* AddEditPointViewController.m */; };
 		2A8E06281C246BEC001AF099 /* AddEditPointViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A8E06261C246BEC001AF099 /* AddEditPointViewController.xib */; };
+		2AB08FA61C258A8D00B6A4AE /* PointsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AB08FA51C258A8D00B6A4AE /* PointsManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,8 @@
 		2A8E06241C246BEC001AF099 /* AddEditPointViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddEditPointViewController.h; sourceTree = "<group>"; };
 		2A8E06251C246BEC001AF099 /* AddEditPointViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddEditPointViewController.m; sourceTree = "<group>"; };
 		2A8E06261C246BEC001AF099 /* AddEditPointViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddEditPointViewController.xib; sourceTree = "<group>"; };
+		2AB08FA41C258A8D00B6A4AE /* PointsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointsManager.h; sourceTree = "<group>"; };
+		2AB08FA51C258A8D00B6A4AE /* PointsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PointsManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +94,8 @@
 				2A8E06211C24641E001AF099 /* PointTableViewCell.xib */,
 				2A8E061C1C246081001AF099 /* SomePoint.h */,
 				2A8E061D1C246081001AF099 /* SomePoint.m */,
+				2AB08FA41C258A8D00B6A4AE /* PointsManager.h */,
+				2AB08FA51C258A8D00B6A4AE /* PointsManager.m */,
 				2A8E06241C246BEC001AF099 /* AddEditPointViewController.h */,
 				2A8E06251C246BEC001AF099 /* AddEditPointViewController.m */,
 				2A8E06261C246BEC001AF099 /* AddEditPointViewController.xib */,
@@ -189,6 +194,7 @@
 				2A8E05FE1C2459E5001AF099 /* main.m in Sources */,
 				2A8E06271C246BEC001AF099 /* AddEditPointViewController.m in Sources */,
 				2A8E06221C24641E001AF099 /* PointTableViewCell.m in Sources */,
+				2AB08FA61C258A8D00B6A4AE /* PointsManager.m in Sources */,
 				2A8E06161C245B58001AF099 /* MainViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

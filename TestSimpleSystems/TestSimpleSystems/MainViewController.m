@@ -14,6 +14,8 @@
 
 #import "AddEditPointViewController.h"
 
+#import "PointsManager.h"
+
 @interface MainViewController () <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *listMapController;
 @property (strong, nonatomic) IBOutlet UITableView *pointsTable;
@@ -45,6 +47,17 @@
     UINib *nib = [UINib nibWithNibName:@"PointTableViewCell" bundle:nil];
     [_pointsTable registerNib:nib forCellReuseIdentifier:@"pointTableViewCell"];
     
+    [[PointsManager sharedInstance] setAddress:@"192.168.1.33"];
+    [_siteOrIpField setText:@"192.168.1.33"];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveAllPointsSuccess)
+                                                 name:NOTIFICATION_ALL_POINTS_LOADED
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveAllPointsFail)
+                                                 name:NOTIFICATION_ALL_POINTS_FAILED
+                                               object:nil];
     
     SomePoint *testPoint = [[SomePoint alloc] init];
     testPoint.pointID = 1;
@@ -56,6 +69,23 @@
     [allPoints addObject:testPoint];
 }
 
+-(void)receiveAllPointsSuccess
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [allPoints removeAllObjects];
+        [allPoints addObjectsFromArray:[[PointsManager sharedInstance] getAllPoints]];
+        
+        [_pointsTable reloadData];
+    });
+    
+#warning обновить карту тоже
+}
+
+-(void)receiveAllPointsFail
+{
+    
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -63,8 +93,11 @@
 
 -(bool)textFieldShouldReturn:(UITextField *)textField
 {
+    if (textField == _siteOrIpField)
+    {
+        [[PointsManager sharedInstance] setAddress:textField.text];
+    }
     [textField resignFirstResponder];
-#warning обработать задание адреса
     return YES;
 }
 
@@ -98,6 +131,11 @@
 {
     addPoint = YES;
     [self performSegueWithIdentifier:@"addEditPoint" sender:nil];
+}
+
+- (IBAction)getPointsTouched:(id)sender
+{
+    [[PointsManager sharedInstance] loadAllPoints];
 }
 
 //delegate datasource
