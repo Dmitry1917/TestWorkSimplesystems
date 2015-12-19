@@ -9,7 +9,7 @@
 #import "AddEditPointViewController.h"
 #import "SomePoint.h"
 
-@interface AddEditPointViewController ()
+@interface AddEditPointViewController () <UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UITextField *titleField;
 @property (strong, nonatomic) IBOutlet UITextField *latField;
 @property (strong, nonatomic) IBOutlet UITextField *lngField;
@@ -26,11 +26,30 @@
     NSLog(@"isAdding %d", _isAdding);
     self.navigationController.navigationBar.translucent = NO;//почему-то задание в storyboard и xib не работало
     
+    _titleField.delegate = self;
+    _latField.delegate = self;
+    _lngField.delegate = self;
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
+                                      initWithTarget:self action:@selector(taped)];
+    [self.view addGestureRecognizer: tapRecognizer];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(bool)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+#warning обработать корректность данных
+    return YES;
+}
+
+-(void)taped
+{
+    [[self view] endEditing:YES];
 }
 
 /*

@@ -8,6 +8,7 @@
             <connections>
                 <outlet property="pointsMap" destination="5Lh-7E-6zo" id="A8x-9T-vFK"/>
                 <outlet property="pointsTable" destination="b1J-Q2-7j3" id="5KE-zF-9LA"/>
+                <outlet property="siteOrIpField" destination="hsc-wj-Z5h" id="Drd-Ia-aBh"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -17,22 +18,33 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="55" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="b1J-Q2-7j3">
-                    <rect key="frame" x="28" y="25" width="264" height="366"/>
+                    <rect key="frame" x="28" y="70" width="264" height="321"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </tableView>
                 <mapView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="5Lh-7E-6zo">
-                    <rect key="frame" x="28" y="25" width="264" height="366"/>
+                    <rect key="frame" x="28" y="70" width="264" height="321"/>
                 </mapView>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="site or ip" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hsc-wj-Z5h">
+                    <rect key="frame" x="28" y="16" width="264" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="VN7-fN-Tvu"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" keyboardType="URL"/>
+                </textField>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="hsc-wj-Z5h" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="16" id="051-yJ-SI0"/>
                 <constraint firstItem="5Lh-7E-6zo" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="28" id="29K-vG-kKW"/>
                 <constraint firstAttribute="trailing" secondItem="b1J-Q2-7j3" secondAttribute="trailing" constant="28" id="4w9-Dj-UKy"/>
-                <constraint firstItem="b1J-Q2-7j3" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="25" id="N0y-qd-m9Y"/>
+                <constraint firstItem="b1J-Q2-7j3" firstAttribute="top" secondItem="hsc-wj-Z5h" secondAttribute="bottom" constant="24" id="E9x-R0-Jej"/>
+                <constraint firstAttribute="trailing" secondItem="hsc-wj-Z5h" secondAttribute="trailing" constant="28" id="IlJ-Km-kId"/>
+                <constraint firstItem="5Lh-7E-6zo" firstAttribute="top" secondItem="hsc-wj-Z5h" secondAttribute="bottom" constant="24" id="MO4-Ps-Pdb"/>
+                <constraint firstItem="hsc-wj-Z5h" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="28" id="R3N-eW-CM6"/>
                 <constraint firstItem="b1J-Q2-7j3" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="28" id="ah8-MO-q3M"/>
                 <constraint firstAttribute="trailing" secondItem="5Lh-7E-6zo" secondAttribute="trailing" constant="28" id="doe-pR-Wfn"/>
                 <constraint firstAttribute="bottom" secondItem="b1J-Q2-7j3" secondAttribute="bottom" constant="25" id="tIT-on-mG3"/>
-                <constraint firstItem="5Lh-7E-6zo" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="25" id="vPG-A0-IvD"/>
                 <constraint firstAttribute="bottom" secondItem="5Lh-7E-6zo" secondAttribute="bottom" constant="25" id="z7m-Lb-d47"/>
             </constraints>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>

@@ -14,10 +14,11 @@
 
 #import "AddEditPointViewController.h"
 
-@interface MainViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface MainViewController () <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *listMapController;
 @property (strong, nonatomic) IBOutlet UITableView *pointsTable;
 @property (strong, nonatomic) IBOutlet MKMapView *pointsMap;
+@property (strong, nonatomic) IBOutlet UITextField *siteOrIpField;
 
 @end
 
@@ -33,6 +34,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    self.navigationController.navigationBar.translucent = NO;//какой-то баг - не все элементы интерфейса считают координаты правильно, если не задать это тут, хотя в xib уже есть
+    
+    _siteOrIpField.delegate = self;
     _pointsTable.delegate = self;
     _pointsTable.dataSource = self;
     
@@ -55,6 +59,13 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(bool)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+#warning обработать задание адреса
+    return YES;
 }
 
 /*
