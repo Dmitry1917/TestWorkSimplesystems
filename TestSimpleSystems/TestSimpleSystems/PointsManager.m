@@ -139,7 +139,7 @@
               NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
               
               SomePoint *point = [SomePoint pointFromDictionary:pointDict];
-              [self replaceOrAddPointWith:point];
+              [self replaceOrAddOrDeletePointWith:point Delete:NO];
               
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_SUCCESS object:self];
           }
@@ -184,7 +184,7 @@
               NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
               
               SomePoint *point = [SomePoint pointFromDictionary:pointDict];
-              [self replaceOrAddPointWith:point];
+              [self replaceOrAddOrDeletePointWith:point Delete:NO];
               
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_POINT_SUCCESS object:self];
           }
@@ -192,6 +192,39 @@
           {
               NSLog(@"update point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_POINT_FAILED object:self];
+          }
+      }] resume];
+}
+
+-(void)deletePointWithID:(NSString*)pointID
+{
+    NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",
+                           urlOrIpServer, pointID];
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                                       timeoutInterval:5];
+    
+    [request setHTTPMethod: @"DELETE"];
+    
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+      {
+          NSLog(@"delete point response status: %ld", (long)[(NSHTTPURLResponse*)response statusCode]);
+          NSLog(@"delete point response %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+          if ([(NSHTTPURLResponse*)response statusCode] == 200)
+          {
+              NSError *err = nil;
+              NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+              
+              SomePoint *point = [SomePoint pointFromDictionary:pointDict];
+              [self replaceOrAddOrDeletePointWith:point Delete:YES];
+              
+              [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_POINT_SUCCESS object:self];
+          }
+          else
+          {
+              NSLog(@"update point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+              [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_POINT_FAILED object:self];
           }
       }] resume];
 }
@@ -208,7 +241,7 @@
     return nil;
 }
 
--(void)replaceOrAddPointWith:(SomePoint*)point
+-(void)replaceOrAddOrDeletePointWith:(SomePoint*)point Delete:(bool)delete
 {
     SomePoint *foundedOldPoint = nil;
     for (SomePoint *oldPoint in allPoints)
@@ -224,7 +257,7 @@
     {
         [allPoints removeObject:foundedOldPoint];
     }
-    [allPoints addObject:point];
+    if (!delete) [allPoints addObject:point];
 }
 
 -(NSArray <SomePoint*>*)getAllPoints

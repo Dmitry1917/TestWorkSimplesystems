@@ -64,11 +64,24 @@
                                                  name:NOTIFICATION_UPDATE_POINT_FAILED
                                                object:nil];
     
-    if (!_isAdding)
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveDeletePointSuccess)
+                                                 name:NOTIFICATION_DELETE_POINT_SUCCESS
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveDeletePointFail)
+                                                 name:NOTIFICATION_DELETE_POINT_FAILED
+                                               object:nil];
+    
+    if (_isAdding)
+    {
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+    else
     {
         [_titleField setText:_editingPoint.title];
-        [_latField setText:[NSString stringWithFormat:@"%f", _editingPoint.lat]];
-        [_lngField setText:[NSString stringWithFormat:@"%f", _editingPoint.lng]];
+        [_latField setText:[NSString stringWithFormat:@"%.03f", _editingPoint.lat]];
+        [_lngField setText:[NSString stringWithFormat:@"%.03f", _editingPoint.lng]];
         if (_editingPoint.desc)
         {
             [_descTextView setText:_editingPoint.desc];
@@ -151,6 +164,31 @@
     });
 }
 
+-(void)receiveDeletePointSuccess
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point deleted successfully" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        
+        [self.navigationController presentViewController:alertController animated:YES completion:nil];
+    });
+}
+
+-(void)receiveDeletePointFail
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point delete fail" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -181,6 +219,14 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (IBAction)deleteButtonTouched:(id)sender
+{
+    if (!_isAdding)
+    {
+        [[PointsManager sharedInstance] deletePointWithID:_editingPoint.pointID];
+    }
+}
 
 - (IBAction)saveButtonTouched:(id)sender
 {

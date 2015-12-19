@@ -59,7 +59,13 @@
         <scene sceneID="dz2-aB-zsN">
             <objects>
                 <viewController id="4rz-Ky-OUQ" customClass="AddEditPointViewController" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="V6I-i4-rLI"/>
+                    <navigationItem key="navigationItem" id="V6I-i4-rLI">
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="zNj-fv-EM7">
+                            <connections>
+                                <action selector="deleteButtonTouched:" destination="4rz-Ky-OUQ" id="0ee-DN-Gze"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                 </viewController>

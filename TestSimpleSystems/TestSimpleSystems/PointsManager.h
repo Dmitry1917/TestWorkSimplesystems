@@ -20,6 +20,9 @@
 #define NOTIFICATION_UPDATE_POINT_SUCCESS @"NOTIFICATION_UPDATE_POINT_SUCCESS"
 #define NOTIFICATION_UPDATE_POINT_FAILED @"NOTIFICATION_UPDATE_POINT_FAILED"
 
+#define NOTIFICATION_DELETE_POINT_SUCCESS @"NOTIFICATION_DELETE_POINT_SUCCESS"
+#define NOTIFICATION_DELETE_POINT_FAILED @"NOTIFICATION_DELETE_POINT_FAILED"
+
 @class SomePoint;
 @interface PointsManager : NSObject
 
@@ -34,5 +37,6 @@
 -(SomePoint*)getResultFullPointWithID:(NSString *)pointID;
 
 -(void)updatePoint:(SomePoint*)point;
+-(void)deletePointWithID:(NSString*)pointID;
 
 @end

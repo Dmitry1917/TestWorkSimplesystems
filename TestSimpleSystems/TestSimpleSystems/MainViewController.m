@@ -30,6 +30,8 @@
     bool isTableActive;
     bool addPoint;
     NSIndexPath *choosedCell;
+    
+    bool tryDeletePoint;
 }
 
 - (void)viewDidLoad {
@@ -69,6 +71,14 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(receiveUpdatePointSuccess)
                                                  name:NOTIFICATION_UPDATE_POINT_SUCCESS
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveDeletePointsSuccess)
+                                                 name:NOTIFICATION_DELETE_POINT_SUCCESS
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveDeletePointsFail)
+                                                 name:NOTIFICATION_DELETE_POINT_FAILED
                                                object:nil];
     
 //    SomePoint *testPoint = [[SomePoint alloc] init];
@@ -111,6 +121,26 @@
 -(void)receiveUpdatePointSuccess
 {
     [self updateInterface];
+}
+
+-(void)receiveDeletePointsSuccess
+{
+    [self updateInterface];
+    tryDeletePoint = NO;
+}
+-(void)receiveDeletePointsFail
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (tryDeletePoint)
+        {
+            tryDeletePoint = NO;
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point can't be deleted" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+            [alertController addAction:ok];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+    });
 }
 
 -(void)updateInterface
@@ -226,9 +256,8 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
-        [allPoints removeObjectAtIndex:indexPath.row];
-        [tableView reloadData];
-#warning удалять точку и на сервере
+        tryDeletePoint = YES;
+        [[PointsManager sharedInstance] deletePointWithID:[allPoints objectAtIndex:indexPath.row].pointID];
     }
 }
 
