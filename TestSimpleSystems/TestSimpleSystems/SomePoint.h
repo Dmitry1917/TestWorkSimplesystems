@@ -10,7 +10,7 @@
 
 @interface SomePoint : NSObject
 
-@property NSInteger pointID;
+@property NSString *pointID;
 @property NSString *title;
 @property NSString *desc;
 @property double lat;

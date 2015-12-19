@@ -58,9 +58,13 @@
                                              selector:@selector(receiveAllPointsFail)
                                                  name:NOTIFICATION_ALL_POINTS_FAILED
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveAddPointSuccess)
+                                                 name:NOTIFICATION_ADD_POINT_SUCCESS
+                                               object:nil];
     
     SomePoint *testPoint = [[SomePoint alloc] init];
-    testPoint.pointID = 1;
+    testPoint.pointID = @"1";
     testPoint.title = @"title";
     testPoint.desc = @"desc";
     testPoint.lat = 121.325432;
@@ -71,6 +75,7 @@
 
 -(void)receiveAllPointsSuccess
 {
+#warning сортировка точек
     dispatch_async(dispatch_get_main_queue(), ^{
         [allPoints removeAllObjects];
         [allPoints addObjectsFromArray:[[PointsManager sharedInstance] getAllPoints]];
@@ -83,12 +88,27 @@
 
 -(void)receiveAllPointsFail
 {
-    
+#warning обработать неудачу получения данных
+}
+
+-(void)receiveAddPointSuccess
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [allPoints removeAllObjects];
+        [allPoints addObjectsFromArray:[[PointsManager sharedInstance] getAllPoints]];
+        
+        [_pointsTable reloadData];
+    });
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 -(bool)textFieldShouldReturn:(UITextField *)textField

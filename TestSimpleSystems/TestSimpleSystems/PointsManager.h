@@ -11,6 +11,9 @@
 #define NOTIFICATION_ALL_POINTS_LOADED @"NOTIFICATION_ALL_POINTS_LOADED"
 #define NOTIFICATION_ALL_POINTS_FAILED @"NOTIFICATION_ALL_POINTS_FAILED"
 
+#define NOTIFICATION_ADD_POINT_SUCCESS @"NOTIFICATION_ADD_POINT_SUCCESS"
+#define NOTIFICATION_ADD_POINT_FAILED @"NOTIFICATION_ADD_POINT_FAILED"
+
 @class SomePoint;
 @interface PointsManager : NSObject
 
@@ -19,6 +22,8 @@
 -(void)setAddress:(NSString*)urlOrIp;
 -(void)loadAllPoints;
 -(NSArray <SomePoint*>*)getAllPoints;
+
+-(void)addPoint:(SomePoint*)point;
 
 
 @end
