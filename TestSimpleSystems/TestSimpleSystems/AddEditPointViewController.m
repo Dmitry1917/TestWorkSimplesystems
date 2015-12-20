@@ -228,9 +228,83 @@
     }
 }
 
+-(bool)latLngRegex:(NSString*)checkedString
+{
+    NSRange   checkedRange = NSMakeRange(0, [checkedString length]);
+    NSString *pattern = @"[-+]?[0-9]*\\.?[0-9]+";
+    NSError  *error = nil;
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
+    NSRange range   = [regex rangeOfFirstMatchInString:checkedString
+                                               options:0
+                                                 range:checkedRange];
+    NSLog(@"regex range %lu %lu", range.location, range.length);
+    
+    if (range.location == 0 && range.length == checkedString.length)
+    {
+        return YES;
+    }
+    else return NO;
+}
+
 - (IBAction)saveButtonTouched:(id)sender
 {
-#warning обработать корректность данных
+    //обработать корректность данных
+    bool titleCorrect = YES;
+    if (_titleField.text.length == 0) titleCorrect = NO;
+    
+    bool latCorrect = YES;
+    if (_latField.text.length > 0)
+    {
+        latCorrect = [self latLngRegex:[_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."]];
+    }
+    else latCorrect = NO;
+    if (latCorrect)
+    {
+        double lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
+        if (lat <= -90 || lat >= 90) latCorrect = NO;
+    }
+    
+    bool lngCorrect = YES;
+    if (_lngField.text.length > 0)
+    {
+        lngCorrect = [self latLngRegex:[_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."]];
+    }
+    else lngCorrect = NO;
+    if (lngCorrect)
+    {
+        double lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
+        if (lng <= -180 || lng >= 180) lngCorrect = NO;
+    }
+    
+    if (!titleCorrect)
+    {
+        [_titleField setBackgroundColor:[UIColor redColor]];
+    }
+    else
+    {
+        [_titleField setBackgroundColor:[UIColor clearColor]];
+    }
+    if (!latCorrect)
+    {
+        [_latField setBackgroundColor:[UIColor redColor]];
+    }
+    else
+    {
+        [_latField setBackgroundColor:[UIColor clearColor]];
+    }
+    if (!lngCorrect)
+    {
+        [_lngField setBackgroundColor:[UIColor redColor]];
+    }
+    else
+    {
+        [_lngField setBackgroundColor:[UIColor clearColor]];
+    }
+    if (!titleCorrect || !latCorrect || !lngCorrect)
+    {
+        return;
+    }
+    
     if (_isAdding)
     {
         SomePoint *point = [[SomePoint alloc] init];
@@ -255,7 +329,6 @@
         }
         else
         {
-#warning проверка данных
             _editingPoint.title = [NSString stringWithString:_titleField.text];
             _editingPoint.lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
             _editingPoint.lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;

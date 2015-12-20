@@ -93,22 +93,12 @@
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
 
-#warning только 1 из этих методов использовать
     [locationManager requestWhenInUseAuthorization];//только foreground
-    //[locationManager requestAlwaysAuthorization];//и background тоже
     
     [locationManager startUpdatingLocation];
     
     _pointsMap.delegate = self;
     
-//    SomePoint *testPoint = [[SomePoint alloc] init];
-//    testPoint.pointID = @"1";
-//    testPoint.title = @"title";
-//    testPoint.desc = @"desc";
-//    testPoint.lat = 121.325432;
-//    testPoint.lng = 15.345236236;
-//    
-//    [allPoints addObject:testPoint];
 }
 
 -(void)receiveAllPointsSuccess
@@ -136,7 +126,6 @@
     });
 }
 
-#warning при необходимости можно переделать, чтобы не обновлять всё при изменении одной точки
 -(void)receiveGetFullPointSuccess
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -222,16 +211,6 @@
     return YES;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 - (IBAction)listMapChanged:(id)sender
 {
     if (_listMapController.selectedSegmentIndex == 0)//list
@@ -288,8 +267,6 @@
     addPoint = NO;
     choosedCell = indexPath.row;
     
-    //[[PointsManager sharedInstance] getFullPointWithID:[allPoints objectAtIndex:indexPath.row].pointID];
-    
     [self performSegueWithIdentifier:@"addEditPoint" sender:nil];
 }
 
@@ -335,13 +312,6 @@
             break;
         }
     }
-}
-
-- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
-{
-#warning проверить и заменить при необходимости
-    //MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(userLocation.coordinate, 800, 800);
-    //[_pointsMap setRegion:[_pointsMap regionThatFits:region] animated:YES];
 }
 
 //navigation
