@@ -16,6 +16,8 @@
 		0ACD2CE11C523BBD00A9CA17 /* SomePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD2CE01C523BBD00A9CA17 /* SomePoint.swift */; };
 		0ACD2CE61C524CC300A9CA17 /* PointTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD2CE41C524CC300A9CA17 /* PointTableViewCell.swift */; };
 		0ACD2CE71C524CC300A9CA17 /* PointTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0ACD2CE51C524CC300A9CA17 /* PointTableViewCell.xib */; };
+		0ACD2CEA1C52723E00A9CA17 /* AddModifyPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD2CE81C52723E00A9CA17 /* AddModifyPointViewController.swift */; };
+		0ACD2CEB1C52723E00A9CA17 /* AddModifyPointViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0ACD2CE91C52723E00A9CA17 /* AddModifyPointViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		0ACD2CE01C523BBD00A9CA17 /* SomePoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SomePoint.swift; sourceTree = "<group>"; };
 		0ACD2CE41C524CC300A9CA17 /* PointTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointTableViewCell.swift; sourceTree = "<group>"; };
 		0ACD2CE51C524CC300A9CA17 /* PointTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointTableViewCell.xib; sourceTree = "<group>"; };
+		0ACD2CE81C52723E00A9CA17 /* AddModifyPointViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddModifyPointViewController.swift; sourceTree = "<group>"; };
+		0ACD2CE91C52723E00A9CA17 /* AddModifyPointViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddModifyPointViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +70,8 @@
 				0ACD2CDC1C5230A600A9CA17 /* MainViewController.swift */,
 				0ACD2CE41C524CC300A9CA17 /* PointTableViewCell.swift */,
 				0ACD2CE51C524CC300A9CA17 /* PointTableViewCell.xib */,
+				0ACD2CE81C52723E00A9CA17 /* AddModifyPointViewController.swift */,
+				0ACD2CE91C52723E00A9CA17 /* AddModifyPointViewController.xib */,
 				0ACD2CE01C523BBD00A9CA17 /* SomePoint.swift */,
 				0ACD2CDD1C5230A600A9CA17 /* MainViewController.xib */,
 				0AA86C0A1C491BF000270D8E /* Main.storyboard */,
@@ -138,6 +144,7 @@
 				0AA86C0E1C491BF000270D8E /* Assets.xcassets in Resources */,
 				0ACD2CE71C524CC300A9CA17 /* PointTableViewCell.xib in Resources */,
 				0AA86C0C1C491BF000270D8E /* Main.storyboard in Resources */,
+				0ACD2CEB1C52723E00A9CA17 /* AddModifyPointViewController.xib in Resources */,
 				0ACD2CDF1C5230A600A9CA17 /* MainViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,6 +156,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ACD2CEA1C52723E00A9CA17 /* AddModifyPointViewController.swift in Sources */,
 				0ACD2CE61C524CC300A9CA17 /* PointTableViewCell.swift in Sources */,
 				0AA86C071C491BF000270D8E /* AppDelegate.swift in Sources */,
 				0ACD2CE11C523BBD00A9CA17 /* SomePoint.swift in Sources */,
