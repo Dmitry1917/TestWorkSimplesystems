@@ -10,6 +10,9 @@ import UIKit
 
 class PointTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var latLabel: UILabel!
+    @IBOutlet weak var lngLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

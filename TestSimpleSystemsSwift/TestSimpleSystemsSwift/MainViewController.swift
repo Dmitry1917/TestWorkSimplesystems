@@ -25,8 +25,12 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         let point1: SomePoint = SomePoint()
         point1.title = "title1"
+        point1.lat = 30.0
+        point1.lng = 25.0
         let point2: SomePoint = SomePoint()
         point2.title = "title2"
+        point2.lat = 60.0
+        point2.lng = 55.0
         
         allPoints.append(point1)
         allPoints.append(point2)
@@ -66,8 +70,12 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         return allPoints.count
     }
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("pointCell", forIndexPath: indexPath)
-        cell.textLabel?.text = allPoints[indexPath.row].title
+        let cell:PointTableViewCell = tableView.dequeueReusableCellWithIdentifier("pointCell", forIndexPath: indexPath) as! PointTableViewCell
+        let currentPoint: SomePoint = allPoints[indexPath.row]
+        
+        cell.titleLabel.text = currentPoint.title
+        cell.latLabel.text = String(format: "%.4f", currentPoint.lat)
+        cell.lngLabel.text = String(format: "%.4f", currentPoint.lng)
         
         return cell
     }
