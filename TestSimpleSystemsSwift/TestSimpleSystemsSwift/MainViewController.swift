@@ -39,6 +39,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         siteField.delegate = self
         let tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleTap:"))
+        tapRecognizer.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tapRecognizer)
         
         let point1: SomePoint = SomePoint()
@@ -79,7 +80,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {
-        self.view.endEditing(true)
+        textField.resignFirstResponder()
         
         return true
     }
@@ -109,7 +110,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         amvc.isAddingPoint = isAddingPoint
         if !isAddingPoint
         {
-            amvc.choosedPoint = allPoints[choosedPointNumber]
+            amvc.editingPoint = allPoints[choosedPointNumber]
         }
     }
     

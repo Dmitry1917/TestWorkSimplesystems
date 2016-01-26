@@ -6,6 +6,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddModifyPointViewController" customModule="TestSimpleSystemsSwift" customModuleProvider="target">
             <connections>
+                <outlet property="descView" destination="lPu-wO-fLk" id="ZlC-fW-VFc"/>
+                <outlet property="latField" destination="lAc-n6-uG4" id="hDr-jy-kSd"/>
+                <outlet property="lngField" destination="hvn-HR-VdE" id="P4V-TB-QgS"/>
+                <outlet property="titleField" destination="a08-GN-J7n" id="VJ3-os-HbR"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
