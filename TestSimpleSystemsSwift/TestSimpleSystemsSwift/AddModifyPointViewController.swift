@@ -22,9 +22,9 @@ class AddModifyPointViewController: UIViewController {
         {
             self.navigationItem.rightBarButtonItem = nil
         }
-        if choosedPoint != nil
+        if choosedPoint != nil && choosedPoint?.title != nil
         {
-            NSLog("choosed point %@", choosedPoint!.title)
+            NSLog("choosed point %@", choosedPoint!.title!)
         }
         
     }

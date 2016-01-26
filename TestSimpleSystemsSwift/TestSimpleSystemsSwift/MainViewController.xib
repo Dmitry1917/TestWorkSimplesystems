@@ -7,6 +7,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController" customModule="TestSimpleSystemsSwift" customModuleProvider="target">
             <connections>
                 <outlet property="pointsTable" destination="Bsi-nY-DfQ" id="Zxk-AD-JbG"/>
+                <outlet property="siteField" destination="vej-fu-bcG" id="hmH-Il-FUz"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -16,15 +17,41 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Bsi-nY-DfQ">
-                    <rect key="frame" x="8" y="15" width="304" height="385"/>
+                    <rect key="frame" x="8" y="73" width="304" height="327"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </tableView>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="site or ip" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vej-fu-bcG">
+                    <rect key="frame" x="8" y="14" width="220" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="VdJ-8B-Rxz"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" keyboardType="URL"/>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rS4-0n-SIH">
+                    <rect key="frame" x="240" y="14" width="67" height="30"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="cpR-yr-NpZ"/>
+                        <constraint firstAttribute="width" constant="67" id="ekp-4v-vfU"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <state key="normal" title="get points"/>
+                    <connections>
+                        <action selector="getPointsTouched:" destination="-1" eventType="touchUpInside" id="8pX-LN-Pez"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="rS4-0n-SIH" secondAttribute="trailing" constant="13" id="1z2-3w-76T"/>
+                <constraint firstItem="rS4-0n-SIH" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="14" id="6kg-e2-Tn8"/>
+                <constraint firstItem="vej-fu-bcG" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="FBr-RK-sPW"/>
+                <constraint firstItem="rS4-0n-SIH" firstAttribute="leading" secondItem="vej-fu-bcG" secondAttribute="trailing" constant="12" id="HuO-Ni-e0r"/>
+                <constraint firstItem="vej-fu-bcG" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="14" id="Jtp-3t-Um7"/>
                 <constraint firstAttribute="trailing" secondItem="Bsi-nY-DfQ" secondAttribute="trailing" constant="8" id="MAi-Mq-i9g"/>
                 <constraint firstItem="Bsi-nY-DfQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="bUO-D9-SJE"/>
-                <constraint firstItem="Bsi-nY-DfQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="15" id="gb2-Zx-c9d"/>
+                <constraint firstItem="Bsi-nY-DfQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="73" id="gb2-Zx-c9d"/>
                 <constraint firstAttribute="bottom" secondItem="Bsi-nY-DfQ" secondAttribute="bottom" constant="16" id="t6d-Cc-99u"/>
             </constraints>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>

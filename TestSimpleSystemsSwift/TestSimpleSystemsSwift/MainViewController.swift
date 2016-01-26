@@ -8,9 +8,10 @@
 
 import UIKit
 
-class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     @IBOutlet weak var mapListChooser: UISegmentedControl!
     @IBOutlet weak var pointsTable: UITableView!
+    @IBOutlet weak var siteField: UITextField!
     
     private var allPoints: Array<SomePoint> = []
     private var isAddingPoint: Bool = false
@@ -20,10 +21,25 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         
         pointsTable.registerNib(UINib(nibName: "PointTableViewCell", bundle: nil), forCellReuseIdentifier: "pointCell")
+        
+        PointsManager.sharedInstance.setAdress("192.168.1.33")
+        siteField.text = "192.168.1.33"
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAllPointsSuccess"), name: NOTIFICATION_ALL_POINTS_LOADED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAllPointsFail"), name: NOTIFICATION_ALL_POINTS_FAILED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAddPointSuccess"), name: NOTIFICATION_ADD_POINT_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveGetFullPointSuccess"), name: NOTIFICATION_GET_FULL_POINT_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveUpdatePointSuccess"), name: NOTIFICATION_UPDATE_POINT_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsSuccess"), name: NOTIFICATION_DELETE_POINT_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsFail"), name: NOTIFICATION_DELETE_POINT_FAILED, object: nil)
 
         // Do any additional setup after loading the view.
         pointsTable.delegate = self
         pointsTable.dataSource = self
+        
+        siteField.delegate = self
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleTap:"))
+        self.view.addGestureRecognizer(tapRecognizer)
         
         let point1: SomePoint = SomePoint()
         point1.title = "title1"
@@ -56,6 +72,31 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.performSegueWithIdentifier("addModifyPoint", sender: nil)
     }
     
+    @IBAction func getPointsTouched(sender: AnyObject)
+    {
+        PointsManager.sharedInstance.loadAllPoints()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        self.view.endEditing(true)
+        
+        return true
+    }
+    func handleTap(sender: UITapGestureRecognizer? = nil)//параметр по умолчанию
+    {
+        self.view.endEditing(true)
+    }
+    
+    //notifications
+    func receiveAllPointsSuccess()
+    {
+        
+    }
+    func receiveAllPointsFail()
+    {
+        
+    }
     
     // MARK: - Navigation
 
@@ -86,8 +127,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let currentPoint: SomePoint = allPoints[indexPath.row]
         
         cell.titleLabel.text = currentPoint.title
-        cell.latLabel.text = String(format: "%.5f", currentPoint.lat)
-        cell.lngLabel.text = String(format: "%.5f", currentPoint.lng)
+        if currentPoint.lat != nil { cell.latLabel.text = String(format: "%.5f", currentPoint.lat!) }
+        if currentPoint.lng != nil { cell.lngLabel.text = String(format: "%.5f", currentPoint.lng!) }
         
         return cell
     }
