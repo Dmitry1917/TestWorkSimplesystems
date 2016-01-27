@@ -42,7 +42,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleTap:"))
         tapRecognizer.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tapRecognizer)
-        
+        /*
         let point1: SomePoint = SomePoint()
         point1.title = "title1"
         point1.lat = 30.0
@@ -54,6 +54,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         allPoints.append(point1)
         allPoints.append(point2)
+        */
     }
 
     override func didReceiveMemoryWarning() {
@@ -224,9 +225,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     {
         if editingStyle == UITableViewCellEditingStyle.Delete
         {
-            allPoints.removeAtIndex(indexPath.row)
-//TODO: при удалении отправлять команду на сервер
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            tryDeletePoint = true
+            PointsManager.sharedInstance.deletePointWithID(allPoints[indexPath.row].pointID)
         }
     }
 }

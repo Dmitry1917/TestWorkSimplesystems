@@ -55,8 +55,8 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveGetFullPointFail"), name: NOTIFICATION_GET_FULL_POINT_FAILED, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveUpdatePointSuccess"), name: NOTIFICATION_UPDATE_POINT_SUCCESS, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveUpdatePointFail"), name: NOTIFICATION_UPDATE_POINT_FAILED, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsSuccess"), name: NOTIFICATION_DELETE_POINT_SUCCESS, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsFail"), name: NOTIFICATION_DELETE_POINT_FAILED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointSuccess"), name: NOTIFICATION_DELETE_POINT_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointFail"), name: NOTIFICATION_DELETE_POINT_FAILED, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -162,7 +162,10 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
 
     @IBAction func removeButtonTouched(sender: AnyObject)
     {
-        
+        if !isAddingPoint
+        {
+            PointsManager.sharedInstance.deletePointWithID(self.editingPoint!.pointID)
+        }
     }
     
     /*
@@ -250,50 +253,35 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
+    func receiveDeletePointSuccess()
+    {
+        dispatch_async(dispatch_get_main_queue(), {
+            self.navigationController?.popViewControllerAnimated(true)
+            
+            let alertController = UIAlertController(title: "Point deleted successfully", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+            alertController.addAction(alertActionOK)
+            self.navigationController?.presentViewController(alertController, animated: true, completion: nil)
+        })
+    }
+    
+    func receiveDeletePointFail()
+    {
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            let alertController = UIAlertController(title: "Point delete fail", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+            alertController.addAction(alertActionOK)
+            self.presentViewController(alertController, animated: true, completion: nil)
+        })
+    }
+    
+    deinit
+    {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     /*
-    -(void)receiveDeletePointSuccess
-    {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    
-    [self.navigationController popViewControllerAnimated:YES];
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point deleted successfully" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self.navigationController presentViewController:alertController animated:YES completion:nil];
-    });
-    }
-    
-    -(void)receiveDeletePointFail
-    {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point delete fail" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
-    });
-    }
-    
-    - (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-    }
-    
-    -(void)dealloc
-    {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
-    
-    - (IBAction)deleteButtonTouched:(id)sender
-    {
-    if (!_isAdding)
-    {
-    [[PointsManager sharedInstance] deletePointWithID:_editingPoint.pointID];
-    }
-    }
-    
     -(bool)latLngRegex:(NSString*)checkedString
     {
     NSRange   checkedRange = NSMakeRange(0, [checkedString length]);
