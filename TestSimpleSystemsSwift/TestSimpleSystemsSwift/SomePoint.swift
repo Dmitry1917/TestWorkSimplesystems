@@ -30,9 +30,9 @@ class SomePoint: NSObject {
         {
             point.title = title
         }
-        if let latStr = pointDict.objectForKey("lat") as? String
+        if let latStr = pointDict.objectForKey("lat") as? Double?
         {
-            if let lat = Double(latStr)
+            if let lat = latStr//Double(latStr)
             {
                 point.lat = lat
             }
@@ -41,9 +41,9 @@ class SomePoint: NSObject {
                 point.lat = 0
             }
         }
-        if let lngStr = pointDict.objectForKey("lng") as? String
+        if let lngStr = pointDict.objectForKey("lng") as? Double?
         {
-            if let lng = Double(lngStr)
+            if let lng = lngStr
             {
                 point.lng = lng
             }

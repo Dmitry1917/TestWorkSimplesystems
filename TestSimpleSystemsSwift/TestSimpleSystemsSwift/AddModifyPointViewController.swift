@@ -38,10 +38,7 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
             if (editingPoint!.desc == DESC_NOT_LOADED)
             {
                 descView.text = DESC_NOT_LOADED
-                
-                
-                
-                //PointsManager.sharedInstance.getFullPointWithID(editingPoint!.pointID)
+                PointsManager.sharedInstance.getFullPointWithID(editingPoint!.pointID)
             }
         }
         
@@ -182,24 +179,25 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
-    /*
-    -(void)receiveGetFullPointSuccess
+    func receiveGetFullPointSuccess()
     {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    SomePoint *replacePoint = [[PointsManager sharedInstance] getResultFullPointWithID:_editingPoint.pointID];
+        dispatch_async(dispatch_get_main_queue(), {
+            let replacePoint = PointsManager.sharedInstance.getResultFullPointWithID(self.editingPoint!.pointID)
+            
+            if (replacePoint != nil)
+            {
+                self.editingPoint = replacePoint;
+                self.descView.text = self.editingPoint!.desc
+            }
+        })
     
-    if (replacePoint)
-    {
-    _editingPoint = replacePoint;
-    [_descTextView setText:_editingPoint.desc];
     }
-    });
-    }
-    -(void)receiveGetFullPointFail
+    func receiveGetFullPointFail()
     {
     //пока никакой реакции не требуется
     }
     
+    /*
     -(void)receiveUpdatePointSuccess
     {
     dispatch_async(dispatch_get_main_queue(), ^{

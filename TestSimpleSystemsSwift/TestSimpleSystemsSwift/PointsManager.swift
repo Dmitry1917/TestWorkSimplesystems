@@ -69,9 +69,9 @@ class PointsManager: NSObject {
                             }
                             NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_ALL_POINTS_LOADED, object: nil)
                         }
-                        catch let error as NSError
+                        catch let err as NSError
                         {
-                            print("json error: \(error.localizedDescription)")
+                            print("json error: \(err.localizedDescription)")
                         }
                     }
                     else
@@ -143,9 +143,92 @@ class PointsManager: NSObject {
         })
         dataTask.resume()
     }
-
+    
+    func getFullPointWithID(pointID: String)
+    {
+        let urlString = String(format: "http://%@:3000/points/%@", arguments: [urlOrIpServer, pointID])
+        let url = NSURL(string: urlString)!
+        let request = NSMutableURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
+        
+        let dataTask = NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: {(data, response, error) -> Void in
+            
+            if let httpResponse = response as? NSHTTPURLResponse
+            {
+                NSLog("get point response status: %ld", httpResponse.statusCode)
+                if let httpData = data
+                {
+                    NSLog("get point response %@", String(data: httpData, encoding: NSUTF8StringEncoding)!)
+                    
+                    if httpResponse.statusCode == 200
+                    {
+                        do
+                        {
+                            let pointDict: NSDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
+                            
+                            let point = SomePoint.pointFromDictionary(pointDict)
+                            
+                            self.replaceOrAddOrDeletePoint(point, delete: false)
+                            
+                            NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_GET_FULL_POINT_SUCCESS, object: nil)
+                        }
+                        catch let err as NSError
+                        {
+                            print("json error: \(err.localizedDescription)")
+                        }
+                    }
+                    else
+                    {
+                        NSLog("get point error: %@", error!)
+                        NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_GET_FULL_POINT_FAILED, object: nil)
+                    }
+                }
+            }
+        })
+        
+        dataTask.resume()
+    }
+    
+    func replaceOrAddOrDeletePoint(point: SomePoint, delete:Bool)
+    {
+        var foundedOldPoint: SomePoint? = nil
+        
+        for oldPoint in allPoints
+        {
+            if oldPoint.pointID == point.pointID
+            {
+                foundedOldPoint = oldPoint
+                break
+            }
+        }
+        if foundedOldPoint != nil
+        {
+            allPoints.removeAtIndex(allPoints.indexOf(foundedOldPoint!)!)
+        }
+        if !delete { allPoints.append(point) }
+    }
+    
+    func getResultFullPointWithID(pointID: String) -> SomePoint?
+    {
+        for point in allPoints
+        {
+            if point.pointID == pointID
+            {
+                return point
+            }
+        }
+        
+        return nil
+    }
+    
+    func getAllPoints() -> Array<SomePoint>
+    {
+        var array:Array<SomePoint> = Array()
+        array.appendContentsOf(allPoints)
+        
+        return array
+    }
+    
 }
-
 
 /*
 -(void)getFullPointWithID:(NSString*)pointID
@@ -254,41 +337,5 @@ class PointsManager: NSObject {
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_POINT_FAILED object:self];
     }
     }] resume];
-}
-
--(SomePoint*)getResultFullPointWithID:(NSString *)pointID
-{
-    for (SomePoint *point in allPoints)
-    {
-        if ([point.pointID isEqualToString:pointID])
-        {
-            return point;
-        }
-    }
-    return nil;
-}
-
--(void)replaceOrAddOrDeletePointWith:(SomePoint*)point Delete:(bool)delete
-{
-    SomePoint *foundedOldPoint = nil;
-    for (SomePoint *oldPoint in allPoints)
-    {
-        if ([oldPoint.pointID isEqualToString:point.pointID])
-        {
-            foundedOldPoint = oldPoint;
-            break;
-        }
-    }
-    
-    if (foundedOldPoint)
-    {
-        [allPoints removeObject:foundedOldPoint];
-    }
-    if (!delete) [allPoints addObject:point];
-}
-
--(NSArray <SomePoint*>*)getAllPoints
-    {
-        return [NSArray arrayWithArray:allPoints];
 }
 */
