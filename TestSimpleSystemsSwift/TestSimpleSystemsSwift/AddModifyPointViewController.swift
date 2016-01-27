@@ -118,27 +118,46 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
             
             PointsManager.sharedInstance.addPoint(point)
         }
-        /*else
+        else
         {
-            #warning Такая проверка и реакция на неё, конечно, неудачны, но как обрабатывать подобные ситуации (не получили полных данных о точке, которую хотим поменять) и что показывать пользователю обычно решается совместно, а не единолично разработчиком.
-            if ([_descTextView.text isEqualToString:DESC_NOT_LOADED])
+            //Такая проверка и реакция на неё, конечно, неудачны, но как обрабатывать подобные ситуации (не получили полных данных о точке, которую хотим поменять) и что показывать пользователю обычно решается совместно, а не единолично разработчиком.
+            if descView.text == DESC_NOT_LOADED
             {
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point was not fully loaded" message:@"It will be better not update point, before full data available." preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-                [alertController addAction:ok];
-                
-                [self presentViewController:alertController animated:YES completion:nil];
+                let alertController = UIAlertController(title: "Point was not fully loaded", message: "It will be better not update point, before full data available.", preferredStyle: UIAlertControllerStyle.Alert)
+                let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+                alertController.addAction(alertActionOK)
+                self.presentViewController(alertController, animated: true, completion: nil)
             }
             else
             {
-                _editingPoint.title = [NSString stringWithString:_titleField.text];
-                _editingPoint.lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-                _editingPoint.lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-                _editingPoint.desc = [NSString stringWithString:_descTextView.text];
+                self.editingPoint!.title = String(stringLiteral:titleField.text!)
+                if let latStr = latField.text?.stringByReplacingOccurrencesOfString(",", withString: ".")
+                {
+                    if let lat = Double(latStr)
+                    {
+                        self.editingPoint!.lat = lat
+                    }
+                    else
+                    {
+                        self.editingPoint!.lat = 0
+                    }
+                }
+                if let lngStr = lngField.text?.stringByReplacingOccurrencesOfString(",", withString: ".")
+                {
+                    if let lng = Double(lngStr)
+                    {
+                        self.editingPoint!.lng = lng
+                    }
+                    else
+                    {
+                        self.editingPoint!.lng = 0
+                    }
+                }
+                self.editingPoint!.desc = String(stringLiteral:descView.text)
                 
-                [[PointsManager sharedInstance] updatePoint:_editingPoint];
+                PointsManager.sharedInstance.updatePoint(self.editingPoint!)
             }
-        }*/
+        }
     }
 
     @IBAction func removeButtonTouched(sender: AnyObject)
@@ -182,12 +201,15 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
     func receiveGetFullPointSuccess()
     {
         dispatch_async(dispatch_get_main_queue(), {
-            let replacePoint = PointsManager.sharedInstance.getResultFullPointWithID(self.editingPoint!.pointID)
-            
-            if (replacePoint != nil)
+            if self.editingPoint != nil
             {
-                self.editingPoint = replacePoint;
-                self.descView.text = self.editingPoint!.desc
+                let replacePoint = PointsManager.sharedInstance.getResultFullPointWithID(self.editingPoint!.pointID)
+                
+                if (replacePoint != nil)
+                {
+                    self.editingPoint = replacePoint;
+                    self.descView.text = self.editingPoint!.desc
+                }
             }
         })
     
@@ -197,35 +219,38 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
     //пока никакой реакции не требуется
     }
     
+    func receiveUpdatePointSuccess()
+    {
+    dispatch_async(dispatch_get_main_queue(), {
+        
+        if self.editingPoint != nil
+        {
+            let replacePoint = PointsManager.sharedInstance.getResultFullPointWithID(self.editingPoint!.pointID)
+            
+            if replacePoint != nil
+            {
+                self.editingPoint = replacePoint
+                
+                let alertController = UIAlertController(title: "Point updated", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+                let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+                alertController.addAction(alertActionOK)
+                self.presentViewController(alertController, animated: true, completion: nil)
+            }
+        }
+        })
+    }
+    func receiveUpdatePointFail()
+    {
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            let alertController = UIAlertController(title: "Point update fail", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+            alertController.addAction(alertActionOK)
+            self.presentViewController(alertController, animated: true, completion: nil)
+        })
+    }
+    
     /*
-    -(void)receiveUpdatePointSuccess
-    {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    SomePoint *replacePoint = [[PointsManager sharedInstance] getResultFullPointWithID:_editingPoint.pointID];
-    
-    if (replacePoint)
-    {
-    _editingPoint = replacePoint;
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point updated" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
-    }
-    });
-    }
-    -(void)receiveUpdatePointFail
-    {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point update fail" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
-    });
-    }
-    
     -(void)receiveDeletePointSuccess
     {
     dispatch_async(dispatch_get_main_queue(), ^{

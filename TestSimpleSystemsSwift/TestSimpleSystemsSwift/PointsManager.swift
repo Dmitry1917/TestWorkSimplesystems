@@ -188,6 +188,64 @@ class PointsManager: NSObject {
         dataTask.resume()
     }
     
+    func updatePoint(point: SomePoint)
+    {
+        let urlString = String(format: "http://%@:3000/points/%@", arguments: [urlOrIpServer, point.pointID])
+        let url = NSURL(string: urlString)!
+        let request = NSMutableURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
+        request.HTTPMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let dictPoint = NSDictionary(objects: [point.title, String(format: "%f", arguments: [point.lat]), String(format: "%f", arguments: [point.lng]), point.desc], forKeys: ["title", "lat", "lng", "desc"])
+        
+        var postData = NSData()
+        do
+        {
+            postData = try NSJSONSerialization.dataWithJSONObject(dictPoint, options: NSJSONWritingOptions.PrettyPrinted)
+        }
+        catch let error as NSError
+        {
+            print("json error: \(error.localizedDescription)")
+        }
+        request.HTTPBody = postData
+        
+        
+        let dataTask = NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: {(data, response, error) -> Void in
+            
+            if let httpResponse = response as? NSHTTPURLResponse
+            {
+                NSLog("update point response status: %ld", httpResponse.statusCode)
+                if let httpData = data
+                {
+                    NSLog("update point response %@", String(data: httpData, encoding: NSUTF8StringEncoding)!)
+                    
+                    if httpResponse.statusCode == 200
+                    {
+                        do
+                        {
+                            let pointDict: NSDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
+                            
+                            let point = SomePoint.pointFromDictionary(pointDict)
+                            self.replaceOrAddOrDeletePoint(point, delete: false)
+                            
+                            NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_UPDATE_POINT_SUCCESS, object: nil)
+                        }
+                        catch let err as NSError
+                        {
+                            print("json error: \(err.localizedDescription)")
+                        }
+                    }
+                    else
+                    {
+                        if error != nil {NSLog("update point error: %@", error!)}
+                        NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_UPDATE_POINT_FAILED, object: nil)
+                    }
+                }
+            }
+        })
+        dataTask.resume()
+    }
+    
     func replaceOrAddOrDeletePoint(point: SomePoint, delete:Bool)
     {
         var foundedOldPoint: SomePoint? = nil
@@ -231,81 +289,6 @@ class PointsManager: NSObject {
 }
 
 /*
--(void)getFullPointWithID:(NSString*)pointID
-{
-    NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",
-    urlOrIpServer, pointID];
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
-    cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
-    timeoutInterval:5];
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-    NSLog(@"get point response status: %ld", (long)[(NSHTTPURLResponse*)response statusCode]);
-    NSLog(@"get point response %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    if ([(NSHTTPURLResponse*)response statusCode] == 200)
-    {
-    NSError *err = nil;
-    NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
-    
-    SomePoint *point = [SomePoint pointFromDictionary:pointDict];
-    [self replaceOrAddOrDeletePointWith:point Delete:NO];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_SUCCESS object:self];
-    }
-    else
-    {
-    NSLog(@"get point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_GET_FULL_POINT_FAILED object:self];
-    }
-    }] resume];
-}
-
--(void)updatePoint:(SomePoint*)point
-{
-    NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",
-    urlOrIpServer, point.pointID];
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
-    cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
-    timeoutInterval:5];
-    
-    [request setHTTPMethod: @"PUT"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
-    NSDictionary *dictPoint = [NSDictionary dictionaryWithObjectsAndKeys:
-    point.title, @"title",
-    [NSString stringWithFormat:@"%f", point.lat], @"lat",
-    [NSString stringWithFormat:@"%f", point.lng], @"lng",
-    point.desc, @"desc",
-    nil];
-    
-    NSError *error = nil;
-    NSData *postData = [NSJSONSerialization dataWithJSONObject:dictPoint options:0 error:&error];
-    [request setHTTPBody:postData];
-    
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-    NSLog(@"update point response status: %ld", (long)[(NSHTTPURLResponse*)response statusCode]);
-    NSLog(@"update point response %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    if ([(NSHTTPURLResponse*)response statusCode] == 200)
-    {
-    NSError *err = nil;
-    NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
-    
-    SomePoint *point = [SomePoint pointFromDictionary:pointDict];
-    [self replaceOrAddOrDeletePointWith:point Delete:NO];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_POINT_SUCCESS object:self];
-    }
-    else
-    {
-    NSLog(@"update point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_POINT_FAILED object:self];
-    }
-    }] resume];
-}
-
 -(void)deletePointWithID:(NSString*)pointID
 {
     NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",
