@@ -85,54 +85,69 @@ class PointsManager: NSObject {
         
         dataTask.resume()
     }
+    
+    func addPoint(point: SomePoint)
+    {
+        let urlString = String(format: "http://%@:3000/points", arguments: [urlOrIpServer])
+        let url = NSURL(string: urlString)!
+        let request = NSMutableURLRequest(URL: url, cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
+        request.HTTPMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let dictPoint = NSDictionary(objects: [point.title, String(format: "%f", arguments: [point.lat]), String(format: "%f", arguments: [point.lng]), point.desc], forKeys: ["title", "lat", "lng", "desc"])
+        
+        var postData = NSData()
+        do
+        {
+            postData = try NSJSONSerialization.dataWithJSONObject(dictPoint, options: NSJSONWritingOptions.PrettyPrinted)
+        }
+        catch let error as NSError
+        {
+            print("json error: \(error.localizedDescription)")
+        }
+        request.HTTPBody = postData
+        
+        
+        let dataTask = NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: {(data, response, error) -> Void in
+            
+            if let httpResponse = response as? NSHTTPURLResponse
+            {
+                NSLog("add point response status: %ld", httpResponse.statusCode)
+                if let httpData = data
+                {
+                    NSLog("add point response %@", String(data: httpData, encoding: NSUTF8StringEncoding)!)
+                    
+                    if httpResponse.statusCode == 200
+                    {
+                        do
+                        {
+                            let pointDict: NSDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
+                            
+                            let point = SomePoint.pointFromDictionary(pointDict)
+                            self.allPoints.append(point)
+                            
+                            NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_ADD_POINT_SUCCESS, object: nil)
+                        }
+                        catch let err as NSError
+                        {
+                            print("json error: \(err.localizedDescription)")
+                        }
+                    }
+                    else
+                    {
+                        if error != nil {NSLog("add point error: %@", error!)}
+                        NSNotificationCenter.defaultCenter().postNotificationName(NOTIFICATION_ADD_POINT_FAILED, object: nil)
+                    }
+                }
+            }
+        })
+        dataTask.resume()
+    }
 
 }
+
+
 /*
--(void)addPoint:(SomePoint*)point
-{
-    NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points",
-    urlOrIpServer];
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
-    cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
-    timeoutInterval:5];
-    
-    [request setHTTPMethod: @"POST"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
-    NSDictionary *dictPoint = [NSDictionary dictionaryWithObjectsAndKeys:
-    point.title, @"title",
-    [NSString stringWithFormat:@"%f", point.lat], @"lat",
-    [NSString stringWithFormat:@"%f", point.lng], @"lng",
-    point.desc, @"desc",
-    nil];
-    
-    NSError *error = nil;
-    NSData *postData = [NSJSONSerialization dataWithJSONObject:dictPoint options:0 error:&error];
-    [request setHTTPBody:postData];
-    
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-    NSLog(@"add point response status: %ld", (long)[(NSHTTPURLResponse*)response statusCode]);
-    NSLog(@"add point response %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    if ([(NSHTTPURLResponse*)response statusCode] == 200)
-    {
-    NSError *err = nil;
-    NSDictionary *pointDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
-    
-    SomePoint *point = [SomePoint pointFromDictionary:pointDict];
-    [allPoints addObject:point];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_ADD_POINT_SUCCESS object:self];
-    }
-    else
-    {
-    NSLog(@"add point error: %@\ndata: %@", error, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_ADD_POINT_FAILED object:self];
-    }
-    }] resume];
-}
-
 -(void)getFullPointWithID:(NSString*)pointID
 {
     NSString *urlString = [NSString stringWithFormat:@"http://%@:3000/points/%@",

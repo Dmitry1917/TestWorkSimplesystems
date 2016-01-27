@@ -27,11 +27,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAllPointsSuccess"), name: NOTIFICATION_ALL_POINTS_LOADED, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAllPointsFail"), name: NOTIFICATION_ALL_POINTS_FAILED, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAddPointSuccess"), name: NOTIFICATION_ADD_POINT_SUCCESS, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveGetFullPointSuccess"), name: NOTIFICATION_GET_FULL_POINT_SUCCESS, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveUpdatePointSuccess"), name: NOTIFICATION_UPDATE_POINT_SUCCESS, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsSuccess"), name: NOTIFICATION_DELETE_POINT_SUCCESS, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsFail"), name: NOTIFICATION_DELETE_POINT_FAILED, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveAddPointSuccess"), name: NOTIFICATION_ADD_POINT_SUCCESS, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveGetFullPointSuccess"), name: NOTIFICATION_GET_FULL_POINT_SUCCESS, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveUpdatePointSuccess"), name: NOTIFICATION_UPDATE_POINT_SUCCESS, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsSuccess"), name: NOTIFICATION_DELETE_POINT_SUCCESS, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("receiveDeletePointsFail"), name: NOTIFICATION_DELETE_POINT_FAILED, object: nil)
 
         // Do any additional setup after loading the view.
         pointsTable.delegate = self
@@ -128,8 +128,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let currentPoint: SomePoint = allPoints[indexPath.row]
         
         cell.titleLabel.text = currentPoint.title
-        if currentPoint.lat != nil { cell.latLabel.text = String(format: "%.5f", currentPoint.lat!) }
-        if currentPoint.lng != nil { cell.lngLabel.text = String(format: "%.5f", currentPoint.lng!) }
+        cell.latLabel.text = String(format: "%.5f", currentPoint.lat)
+        cell.lngLabel.text = String(format: "%.5f", currentPoint.lng)
         
         return cell
     }

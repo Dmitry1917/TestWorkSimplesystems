@@ -30,30 +30,14 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
         }
         else
         {
-            if editingPoint!.title != nil
-            {
-                titleField.text = editingPoint?.title
-                NSLog("choosed point %@", editingPoint!.title!)
-            }
-            if editingPoint!.lat != nil
-            {
-                latField.text = String(format: "%.03f", arguments: [editingPoint!.lat!])
-            }
-            if editingPoint!.lng != nil
-            {
-                lngField.text = String(format: "%.03f", arguments: [editingPoint!.lng!])
-            }
-            if (editingPoint!.desc != nil)
-            {
-                descView.text = editingPoint!.desc
-            }
-            else
+            titleField.text = editingPoint?.title
+            NSLog("choosed point %@", editingPoint!.title)
+            latField.text = String(format: "%.03f", arguments: [editingPoint!.lat])
+            lngField.text = String(format: "%.03f", arguments: [editingPoint!.lng])
+            descView.text = editingPoint!.desc
+            if (editingPoint!.desc == DESC_NOT_LOADED)
             {
                 descView.text = DESC_NOT_LOADED
-                
-                
-                
-                
                 
                 
                 
@@ -97,6 +81,67 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
     @IBAction func SaveButtonTouched(sender: AnyObject)
     {
         
+        
+        
+        if (isAddingPoint)
+        {
+            let point = SomePoint()
+            point.title = String(stringLiteral:titleField.text!)
+            if let latStr = latField.text?.stringByReplacingOccurrencesOfString(",", withString: ".")
+            {
+                if let lat = Double(latStr)
+                {
+                    point.lat = lat
+                }
+                else
+                {
+                    point.lat = 0
+                }
+            }
+            else
+            {
+                point.lat = 0
+            }
+            if let lngStr = lngField.text?.stringByReplacingOccurrencesOfString(",", withString: ".")
+            {
+                if let lng = Double(lngStr)
+                {
+                    point.lng = lng
+                }
+                else
+                {
+                    point.lng = 0
+                }
+            }
+            else
+            {
+                point.lng = 0
+            }
+            point.desc = String(stringLiteral:descView.text)
+            
+            PointsManager.sharedInstance.addPoint(point)
+        }
+        /*else
+        {
+            #warning Такая проверка и реакция на неё, конечно, неудачны, но как обрабатывать подобные ситуации (не получили полных данных о точке, которую хотим поменять) и что показывать пользователю обычно решается совместно, а не единолично разработчиком.
+            if ([_descTextView.text isEqualToString:DESC_NOT_LOADED])
+            {
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point was not fully loaded" message:@"It will be better not update point, before full data available." preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [alertController addAction:ok];
+                
+                [self presentViewController:alertController animated:YES completion:nil];
+            }
+            else
+            {
+                _editingPoint.title = [NSString stringWithString:_titleField.text];
+                _editingPoint.lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
+                _editingPoint.lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
+                _editingPoint.desc = [NSString stringWithString:_descTextView.text];
+                
+                [[PointsManager sharedInstance] updatePoint:_editingPoint];
+            }
+        }*/
     }
 
     @IBAction func removeButtonTouched(sender: AnyObject)
@@ -113,32 +158,31 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    func receiveAddPointSuccess()
+    {
+        dispatch_async(dispatch_get_main_queue(), {
+            self.navigationController?.popViewControllerAnimated(true)
+            
+            let alertController = UIAlertController(title: "Point added successfully", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+            alertController.addAction(alertActionOK)
+            self.navigationController?.presentViewController(alertController, animated: true, completion: nil)
+        })
+    }
+    
+    func receiveAddPointFail()
+    {
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            let alertController = UIAlertController(title: "Point adding failed", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let alertActionOK = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+            alertController.addAction(alertActionOK)
+            self.presentViewController(alertController, animated: true, completion: nil)
+        })
+    }
+    
     /*
-    -(void)receiveAddPointSuccess
-    {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    
-    [self.navigationController popViewControllerAnimated:YES];
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point added successfully" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self.navigationController presentViewController:alertController animated:YES completion:nil];
-    });
-    }
-    
-    -(void)receiveAddPointFail
-    {
-    dispatch_async(dispatch_get_main_queue(), ^{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point adding failed" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
-    });
-    }
-    
     -(void)receiveGetFullPointSuccess
     {
     dispatch_async(dispatch_get_main_queue(), ^{

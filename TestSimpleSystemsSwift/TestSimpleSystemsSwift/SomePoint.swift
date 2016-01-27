@@ -9,29 +9,59 @@
 import UIKit
 
 class SomePoint: NSObject {
-    var pointID: String? = ""
-    var title: String? = ""
-    var desc: String? = ""
-    var lat: double_t? = 0
-    var lng: double_t? = 0
+    var pointID: String = ""
+    var title: String = ""
+    var desc: String = ""
+    var lat: double_t = 0
+    var lng: double_t = 0
     
     class func pointFromDictionary(pointDict: NSDictionary) -> SomePoint
     {
         let point = SomePoint()
-        point.pointID = pointDict.objectForKey("id") as? String
-        point.title = pointDict.objectForKey("title") as? String
+        if let pointID = pointDict.objectForKey("id") as? String
+        {
+            point.pointID = pointID
+        }
+        else
+        {
+            point.pointID = ""
+        }
+        if let title = pointDict.objectForKey("title") as? String
+        {
+            point.title = title
+        }
         if let latStr = pointDict.objectForKey("lat") as? String
         {
-            point.lat = Double(latStr)
+            if let lat = Double(latStr)
+            {
+                point.lat = lat
+            }
+            else
+            {
+                point.lat = 0
+            }
         }
-        else {point.lat = nil}
         if let lngStr = pointDict.objectForKey("lng") as? String
         {
-            point.lng = Double(lngStr)
+            if let lng = Double(lngStr)
+            {
+                point.lng = lng
+            }
+            else
+            {
+                point.lng = 0
+            }
         }
-        else {point.lng = nil}
-        //point.lng = Double(pointDict.objectForKey("lng") as? String) - так сделать нельзя - приходится обрабатывать отдельно случай отсутствия поля перед преобразованием в число
-        point.desc = pointDict.objectForKey("desc") as? String
+        
+        if let desc = pointDict.objectForKey("desc") as? String
+        {
+            point.desc = desc
+        }
+        else
+        {
+            point.desc = DESC_NOT_LOADED
+        }
+        
         return point;
     }
 }
