@@ -77,8 +77,70 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func SaveButtonTouched(sender: AnyObject)
     {
+        //обработать корректность данных
+        var titleCorrect = true
+        if titleField.text?.characters.count == 0 {titleCorrect = false}
         
+        var latCorrect = true
+        if latField.text?.characters.count > 0
+        {
+            if let latStr = latField.text?.stringByReplacingOccurrencesOfString(",", withString: ".")
+            {
+                latCorrect = latLngRegex(latStr)
+                if latCorrect
+                {
+                    let lat = Double(latStr)
+                    if lat <= -90 || lat >= 90 { latCorrect = false }
+                }
+            }
+            else {latCorrect = false}
+        }
+        else {latCorrect = false}
         
+        var lngCorrect = true
+        if lngField.text?.characters.count > 0
+        {
+            if let lngStr = lngField.text?.stringByReplacingOccurrencesOfString(",", withString: ".")
+            {
+                lngCorrect = latLngRegex(lngStr)
+                if lngCorrect
+                {
+                    let lng = Double(lngStr)
+                    if lng <= -180 || lng >= 180 { lngCorrect = false }
+                }
+            }
+            else {lngCorrect = false}
+        }
+        else {lngCorrect = false}
+        
+        if (!titleCorrect)
+        {
+            titleField.backgroundColor = UIColor.redColor()
+        }
+        else
+        {
+            titleField.backgroundColor = UIColor.whiteColor()
+        }
+        if (!latCorrect)
+        {
+            latField.backgroundColor = UIColor.redColor()
+        }
+        else
+        {
+            latField.backgroundColor = UIColor.whiteColor()
+        }
+        if (!lngCorrect)
+        {
+            lngField.backgroundColor = UIColor.redColor()
+        }
+        else
+        {
+            lngField.backgroundColor = UIColor.whiteColor()
+        }
+        if (!titleCorrect || !latCorrect || !lngCorrect)
+        {
+            return;
+        }
         
         if (isAddingPoint)
         {
@@ -281,116 +343,26 @@ class AddModifyPointViewController: UIViewController, UITextFieldDelegate {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    /*
-    -(bool)latLngRegex:(NSString*)checkedString
+    func latLngRegex(checkedString: String) -> Bool
     {
-    NSRange   checkedRange = NSMakeRange(0, [checkedString length]);
-    NSString *pattern = @"[-+]?[0-9]*\\.?[0-9]+";
-    NSError  *error = nil;
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
-    NSRange range   = [regex rangeOfFirstMatchInString:checkedString
-    options:0
-    range:checkedRange];
-    NSLog(@"regex range %lu %lu", range.location, range.length);
-    
-    if (range.location == 0 && range.length == checkedString.length)
-    {
-    return YES;
-    }
-    else return NO;
-    }
-    
-    - (IBAction)saveButtonTouched:(id)sender
-    {
-    //обработать корректность данных
-    bool titleCorrect = YES;
-    if (_titleField.text.length == 0) titleCorrect = NO;
-    
-    bool latCorrect = YES;
-    if (_latField.text.length > 0)
-    {
-    latCorrect = [self latLngRegex:[_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."]];
-    }
-    else latCorrect = NO;
-    if (latCorrect)
-    {
-    double lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-    if (lat <= -90 || lat >= 90) latCorrect = NO;
+        let checkedRange = NSMakeRange(0, checkedString.characters.count)
+        let pattern = "[-+]?[0-9]*\\.?[0-9]+"
+        do
+        {
+            let regex = try NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions.AnchorsMatchLines)
+            
+            let range = regex.rangeOfFirstMatchInString(checkedString, options: NSMatchingOptions.ReportCompletion, range: checkedRange)
+            
+            if range.location == 0 && range.length == checkedString.characters.count
+            {
+                return true
+            }
+            else {return false}
+        }
+        catch
+        {
+            return false
+        }
     }
     
-    bool lngCorrect = YES;
-    if (_lngField.text.length > 0)
-    {
-    lngCorrect = [self latLngRegex:[_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."]];
-    }
-    else lngCorrect = NO;
-    if (lngCorrect)
-    {
-    double lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-    if (lng <= -180 || lng >= 180) lngCorrect = NO;
-    }
-    
-    if (!titleCorrect)
-    {
-    [_titleField setBackgroundColor:[UIColor redColor]];
-    }
-    else
-    {
-    [_titleField setBackgroundColor:[UIColor clearColor]];
-    }
-    if (!latCorrect)
-    {
-    [_latField setBackgroundColor:[UIColor redColor]];
-    }
-    else
-    {
-    [_latField setBackgroundColor:[UIColor clearColor]];
-    }
-    if (!lngCorrect)
-    {
-    [_lngField setBackgroundColor:[UIColor redColor]];
-    }
-    else
-    {
-    [_lngField setBackgroundColor:[UIColor clearColor]];
-    }
-    if (!titleCorrect || !latCorrect || !lngCorrect)
-    {
-    return;
-    }
-    
-    if (_isAdding)
-    {
-    SomePoint *point = [[SomePoint alloc] init];
-    
-    point.title = [NSString stringWithString:_titleField.text];
-    point.lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-    point.lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-    point.desc = [NSString stringWithString:_descTextView.text];
-    
-    [[PointsManager sharedInstance] addPoint:point];
-    }
-    else
-    {
-    #warning Такая проверка и реакция на неё, конечно, неудачны, но как обрабатывать подобные ситуации (не получили полных данных о точке, которую хотим поменять) и что показывать пользователю обычно решается совместно, а не единолично разработчиком.
-    if ([_descTextView.text isEqualToString:DESC_NOT_LOADED])
-    {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Point was not fully loaded" message:@"It will be better not update point, before full data available." preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:ok];
-    
-    [self presentViewController:alertController animated:YES completion:nil];
-    }
-    else
-    {
-    _editingPoint.title = [NSString stringWithString:_titleField.text];
-    _editingPoint.lat = [_latField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-    _editingPoint.lng = [_lngField.text stringByReplacingOccurrencesOfString:@"," withString:@"."].doubleValue;
-    _editingPoint.desc = [NSString stringWithString:_descTextView.text];
-    
-    [[PointsManager sharedInstance] updatePoint:_editingPoint];
-    }
-    }
-    }
-    */
 }
