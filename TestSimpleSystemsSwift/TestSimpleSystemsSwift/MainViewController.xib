@@ -6,6 +6,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController" customModule="TestSimpleSystemsSwift" customModuleProvider="target">
             <connections>
+                <outlet property="pointsMap" destination="i4V-Qb-JgW" id="jXm-h1-YrT"/>
                 <outlet property="pointsTable" destination="Bsi-nY-DfQ" id="Zxk-AD-JbG"/>
                 <outlet property="siteField" destination="vej-fu-bcG" id="hmH-Il-FUz"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -41,6 +42,9 @@
                         <action selector="getPointsTouched:" destination="-1" eventType="touchUpInside" id="8pX-LN-Pez"/>
                     </connections>
                 </button>
+                <mapView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i4V-Qb-JgW">
+                    <rect key="frame" x="8" y="73" width="304" height="327"/>
+                </mapView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
@@ -50,8 +54,12 @@
                 <constraint firstItem="rS4-0n-SIH" firstAttribute="leading" secondItem="vej-fu-bcG" secondAttribute="trailing" constant="12" id="HuO-Ni-e0r"/>
                 <constraint firstItem="vej-fu-bcG" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="14" id="Jtp-3t-Um7"/>
                 <constraint firstAttribute="trailing" secondItem="Bsi-nY-DfQ" secondAttribute="trailing" constant="8" id="MAi-Mq-i9g"/>
+                <constraint firstItem="i4V-Qb-JgW" firstAttribute="top" secondItem="rS4-0n-SIH" secondAttribute="bottom" constant="29" id="RVz-92-AEn"/>
+                <constraint firstItem="i4V-Qb-JgW" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="b7i-s0-pGv"/>
                 <constraint firstItem="Bsi-nY-DfQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="bUO-D9-SJE"/>
+                <constraint firstAttribute="trailing" secondItem="i4V-Qb-JgW" secondAttribute="trailing" constant="8" id="fOf-4I-1CH"/>
                 <constraint firstItem="Bsi-nY-DfQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="73" id="gb2-Zx-c9d"/>
+                <constraint firstAttribute="bottom" secondItem="i4V-Qb-JgW" secondAttribute="bottom" constant="16" id="ocH-5A-Xea"/>
                 <constraint firstAttribute="bottom" secondItem="Bsi-nY-DfQ" secondAttribute="bottom" constant="16" id="t6d-Cc-99u"/>
             </constraints>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>

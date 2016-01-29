@@ -7,16 +7,24 @@
 //
 
 import UIKit
+import MapKit
 
-class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+class AnnotationWithPointID : MKPointAnnotation {
+    var pointID = ""
+}
+
+class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, MKMapViewDelegate, CLLocationManagerDelegate {
     @IBOutlet weak var mapListChooser: UISegmentedControl!
     @IBOutlet weak var pointsTable: UITableView!
+    @IBOutlet weak var pointsMap: MKMapView!
     @IBOutlet weak var siteField: UITextField!
     
     private var allPoints: Array<SomePoint> = []
     private var isAddingPoint: Bool = false
     private var choosedPointNumber: Int = 0
     private var tryDeletePoint: Bool = false
+    
+    private let locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,19 +50,12 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let tapRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleTap:"))
         tapRecognizer.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tapRecognizer)
-        /*
-        let point1: SomePoint = SomePoint()
-        point1.title = "title1"
-        point1.lat = 30.0
-        point1.lng = 25.0
-        let point2: SomePoint = SomePoint()
-        point2.title = "title2"
-        point2.lat = 60.0
-        point2.lng = 55.0
         
-        allPoints.append(point1)
-        allPoints.append(point2)
-        */
+        
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()//только foreground
+        locationManager.startUpdatingLocation()
+        pointsMap.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,6 +66,17 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func mapListChanged(sender: AnyObject)
     {
         NSLog("mapListChanged %d", mapListChooser.selectedSegmentIndex)
+        
+        if mapListChooser.selectedSegmentIndex == 0
+        {
+            pointsMap.hidden = true
+            pointsTable.hidden = false
+        }
+        else
+        {
+            pointsMap.hidden = false
+            pointsTable.hidden = true
+        }
     }
 
     @IBAction func addNewPointTouched(sender: AnyObject)
@@ -149,35 +161,40 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     func updateInterface()
     {
         allPoints.removeAll()
-        
         allPoints.appendContentsOf(PointsManager.sharedInstance.getAllPoints())
         
-        pointsTable.reloadData()
-        
-        /*
-        CLLocationCoordinate2D currentCoord = _pointsMap.userLocation.location.coordinate;
-        [_pointsMap setCenterCoordinate:currentCoord animated:YES];
-        
-        //NSLog(@"current coord %f %f", currentCoord.latitude, currentCoord.longitude);
-        [allPoints sortUsingComparator:^NSComparisonResult(SomePoint* point1, SomePoint* point2) {
-            NSNumber* distance1 = [NSNumber numberWithDouble:[_pointsMap.userLocation.location distanceFromLocation:[[CLLocation alloc] initWithLatitude:point1.lat longitude:point1.lng]]];
-            NSNumber* distance2 = [NSNumber numberWithDouble:[_pointsMap.userLocation.location distanceFromLocation:[[CLLocation alloc] initWithLatitude:point2.lat longitude:point2.lng]]];
-            return [distance2 compare:distance1];
-            }];
-        
-        [_pointsTable reloadData];
-        
-        //обновить карту
-        [_pointsMap removeAnnotations:_pointsMap.annotations];
-        for (SomePoint *point in allPoints)
+        let loc = pointsMap.userLocation.location
+        if loc != nil
         {
-            AnnotationWithPointID *annotation = [[AnnotationWithPointID alloc] init];
-            [annotation setCoordinate:CLLocationCoordinate2DMake(point.lat, point.lng)];
-            [annotation setTitle:point.title];
-            [annotation setPointID:point.pointID];
-            [_pointsMap addAnnotation:annotation];
+            let currentCoord = loc!.coordinate
+            pointsMap.setCenterCoordinate(currentCoord, animated: true)
+            
+            let arrTemp = (allPoints as NSArray).sortedArrayUsingComparator(){
+                (p1:AnyObject, p2:AnyObject) -> NSComparisonResult in
+                
+                let point1 = p1 as! SomePoint
+                let point2 = p2 as! SomePoint
+                let distance1 = NSNumber(double:self.pointsMap.userLocation.location!.distanceFromLocation(CLLocation(latitude: point1.lat, longitude: point1.lng)))
+                let distance2 = NSNumber(double:self.pointsMap.userLocation.location!.distanceFromLocation(CLLocation(latitude: point2.lat, longitude: point2.lng)))
+                
+                return distance2.compare(distance1)
+            }
+            
+            allPoints = arrTemp as! Array<SomePoint>
+            
+            //обновить карту
+            pointsMap.removeAnnotations(pointsMap.annotations)
+            for point in allPoints
+            {
+                let annotation = AnnotationWithPointID()
+                annotation.coordinate = CLLocationCoordinate2DMake(point.lat, point.lng)
+                annotation.title = point.title
+                annotation.pointID = point.pointID
+                pointsMap.addAnnotation(annotation)
+            }
         }
-        */
+        
+        pointsTable.reloadData()
     }
     
     
@@ -227,6 +244,34 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         {
             tryDeletePoint = true
             PointsManager.sharedInstance.deletePointWithID(allPoints[indexPath.row].pointID)
+        }
+    }
+    
+    //mapview delegate
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView?
+    {
+        if annotation.isKindOfClass(MKUserLocation) {return nil}
+        
+        let anView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "location")
+        anView.canShowCallout = true
+        anView.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure)
+        return anView
+    }
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl)
+    {
+        NSLog("callout tapped for %@", view.annotation!.title!!)
+        
+        for var i = 0; i < allPoints.count; i++
+        {
+            let point = allPoints[i]
+            
+            if point.pointID == (view.annotation as! AnnotationWithPointID).pointID
+            {
+                choosedPointNumber = i
+                isAddingPoint = false
+                self.performSegueWithIdentifier("addModifyPoint", sender: nil)
+                break
+            }
         }
     }
 }
